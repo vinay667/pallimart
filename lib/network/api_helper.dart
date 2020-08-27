@@ -31,10 +31,10 @@ class ApiBaseHelper {
     var responseJson;
     print(_baseUrl+url);
     String accessToken=UserModel.accessToken;
-    print(accessToken+'keytrr');
     try {
       final response = await http.get(_baseUrl + url, headers: {
         'Content-Type': 'application/json',
+        'access-token':accessToken
       });
       print(response.statusCode.toString());
       if(response.statusCode==500)
