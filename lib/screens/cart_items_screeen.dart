@@ -592,9 +592,12 @@ removeProduct(productId);
     );
   }
   removeProduct(int productId) async {
+    var _fromData = {
+      'product_id': productId.toString(),
+    };
     ApiBaseHelper helper=new ApiBaseHelper();
     APIDialog.showAlertDialog(context, 'Removing Product...');
-    var response=await helper.postAPI('product/api/cart/remove?product_id=$productId', context);
+    var response=await helper.postAPIFormData('product/api/cart/remove', context,_fromData);
     Navigator.pop(context);
     if(response['status']=='success')
     {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pallimart/colors/colors.dart';
 import 'package:pallimart/models/category_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:pallimart/screens/sub_category_screen.dart';
 import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/utils/constants.dart';
 import 'package:pallimart/utils/no_internet_check.dart';
@@ -56,13 +57,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
               child: Text(
                 'Categories (Total '+ categoryList.length.toString()+')',
                 style: TextStyle(
-                    color: MyColor.searchTotalTextColor,
-                    fontSize: 15,
+                    color: Colors.indigo,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
                     fontFamily: 'Geomanist'),
               ),
             ),
             SizedBox(
-              height: 12,
+              height: 10,
             ),
             Expanded(
               child: /*GridView.builder(
@@ -76,7 +78,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   }),*/
 
               Container(
-                  margin: EdgeInsets.only(right: 15),
+                  margin: EdgeInsets.only(right: 10,left: 10),
                   child: GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3,
                       childAspectRatio: 2/2
                   ),
@@ -85,39 +87,45 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context,int position)
                       {
+                        return Container(
+                          width: MediaQuery.of(context).size.width/4.3,
+                          child: InkWell(
+                            onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>SubCategoryScreen(categoryList[position]['id'].toString())));
 
-                        return InkWell(
-                            onTap: () => Navigator.pushNamed(context, "/subc"),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width/4.3,
-                              child: Card(
-                                color: Colors.white,
-                                margin: EdgeInsets.only(bottom: 5, left: 4, right: 4, top:5),
-                                elevation: 4,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    FadeInImage.assetNetwork(
-                                      height: 50,
-                                      placeholder: 'images/app_logo.png',
-                                      image: Constants.imageBaseUrl,
-                                    ),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(
-                                      categoryList[position]['categoryName'],
-                                      style: TextStyle(
-                                          color: MyColor.homeTextColor,
-                                          fontSize: 16,
-                                          fontFamily: "Gilroy",
-                                          fontWeight: FontWeight.w700),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
-                                ),
+                            },
+                            child: Card(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)
                               ),
-                            ));
+                              margin: EdgeInsets.only(bottom: 5, left: 4, right: 4, top:5),
+                              elevation: 4,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  FadeInImage.assetNetwork(
+                                    height: 50,
+                                    placeholder: 'images/app_logo.png',
+                                    image: Constants.imageBaseUrl+categoryList[position]['categoryImage'],
+                                  ),
+                                  SizedBox(
+                                    height: 7,
+                                  ),
+                                  Text(
+                                    categoryList[position]['categoryName'],
+                                    style: TextStyle(
+                                        color: MyColor.homeTextColor,
+                                        fontSize: 16,
+                                        fontFamily: "Gilroy",
+                                        fontWeight: FontWeight.w700),
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
 
                       })
 

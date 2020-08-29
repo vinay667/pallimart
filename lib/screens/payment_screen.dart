@@ -1,8 +1,10 @@
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:pallimart/colors/colors.dart';
+import 'package:pallimart/models/user_model.dart';
 import 'package:pallimart/network/api_helper.dart';
 import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/widgets/custom_text_payment.dart';
@@ -261,7 +263,9 @@ class PaymentState extends State<PaymentScreen> {
                       onTap: (){
 
 
-                        placeOrder();
+
+                       placeOrder();
+                        //postData();
                         //Navigator.push(context, CupertinoPageRoute(builder: (context)=>PaymentScreen()));
 
 
@@ -307,17 +311,54 @@ class PaymentState extends State<PaymentScreen> {
   }
 
   placeOrder() async {
+    var _fromData = {
+      'paymentType': 'cashOnDelivery',
+    };
     ApiBaseHelper helper=new ApiBaseHelper();
     APIDialog.showAlertDialog(context, 'Placing Order...');
-    var response=await helper.postAPI('product/api/order/save?paymentType=cashOndelivery', context);
-    Navigator.pop(context);
+    try{
+      var response=await helper.postAPIFormData('product/api/order/save', context,_fromData);
+      Navigator.pop(context);
+      Toast.show('Order Placed Successfully !! !!', context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: Colors.green);
+      print(response.toString());
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => OrderPlacedScreen()),
+          ModalRoute.withName("/home"));
+    }
+    catch (errorMessage) {
+      String message = errorMessage.toString();
+      print(message);
+      Navigator.pop(context);
+      Toast.show('Order Placed Successfully !! !!', context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: Colors.green);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => OrderPlacedScreen()),
+          ModalRoute.withName("/home"));
+    }
 
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => OrderPlacedScreen()),
-        ModalRoute.withName("/home"));
-    Toast.show('Order Placed Successfully !! !!', context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: Colors.green);
   }
+
+/*  postData()async{
+    Map<String,dynamic> _fromData = {
+      'paymentType': 'cashOnDelivery',
+    };
+    var dio = Dio();
+    try {
+      //http://pallimart.com/product/api/order/save
+      //http://www.pallimart.com/product/api/order/save
+      var formData = new FormData.fromMap(_fromData);
+      dio.options.headers["access-token"]=UserModel.accessToken;
+      print(UserModel.accessToken);
+      print(_fromData);
+      var response = await dio.post('http://pallimart.com/product/api/order/save', data: formData);
+      var responseBody = response.data;
+      print(responseBody.toString()+'egwergw');
+      return response.data;
+    } catch (e) {
+      print(e.toString());
+    }
+  }*/
 
 
 

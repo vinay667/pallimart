@@ -28,7 +28,7 @@ class BottomTabState extends State<BottomTabScreen>
   String userName = '', userEmail = '';
   final List<Widget> _children = [
     HomeScreen(),
-    FavouriteScreen(),
+    FavouriteScreen('NA'),
     AccountScreen(),
     MoreScreen(),
     CategoryScreen(),
@@ -99,20 +99,29 @@ class BottomTabState extends State<BottomTabScreen>
                               child: Row(
                                 children: <Widget>[
                                   Container(
-                                    height: 60,
-                                    width: 46.3,
                                     child: Stack(
                                       children: <Widget>[
-                                        Container(
-                                            height: 46.3,
-                                            width: 46.3,
-                                            margin: EdgeInsets.only(top: 10),
-                                            decoration: new BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                image: new DecorationImage(
-                                                    fit: BoxFit.fill,
-                                                    image: new AssetImage(
-                                                        "images/avator.png")))),
+                                        Padding(
+                                            padding: EdgeInsets.only(left: 10,top: 20,bottom: 5),
+                                            child:Container(
+                                              height: 50,
+                                              width: 50,
+                                              decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.white,
+                                                  border: Border.all(width:2,color: Colors.blueAccent),
+                                                  image: new DecorationImage(
+                                                      fit: BoxFit.fill,
+                                                      image: AssetImage(
+                                                          'images/app_logo.png'))),
+                                              /*CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.blueGrey.withOpacity(0.7),
+              child: Image.asset(
+                'images/app_logo.png',
+              ),
+            ),*/
+                                            )),
                                         Padding(
                                           padding: EdgeInsets.only(
                                               right: 5, bottom: 3),

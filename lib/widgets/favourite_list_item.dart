@@ -1,32 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:pallimart/colors/colors.dart';
+import 'package:pallimart/utils/constants.dart';
 
 class FavouriteListItem extends StatefulWidget {
+  String image,productName,productPrice,unit;
+  int quantity;
+  FavouriteListItem(this.image,this.productName,this.productPrice,this.unit,this.quantity);
   @override
-  _FavouriteListItemState createState() => _FavouriteListItemState();
+  _FavouriteListItemState createState() => _FavouriteListItemState(image,productName,productPrice,unit,quantity);
+
 }
 
 class _FavouriteListItemState extends State<FavouriteListItem> {
+  String image,productName,productPrice,unit;
+  int quantity;
+  _FavouriteListItemState(this.image,this.productName,this.productPrice,this.unit,this.quantity);
+
   @override
   Widget build(BuildContext context) {
-    return InkWell(onTap: ()=> Navigator.pushNamed(context, "/product_detail"),child:Container(
+    return Container(
         width: MediaQuery.of(context).size.width * .45,
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: <Widget>[
-            Card(
-              color: Colors.white,
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(10.0),
+                    topRight: const Radius.circular(10.0),
+                  ),
+                  boxShadow: [
+                    new BoxShadow(
+                        color: MyColor.themeColor.withOpacity(0.5),
+                        blurRadius: 7.0,
+
+                    ),
+                  ]
+              ),
+
               margin: EdgeInsets.only(bottom: 42, left: 4, right: 4),
               child: Stack(
                 alignment: Alignment.topRight,
                 children: <Widget>[
                   ClipRRect(
-                      borderRadius: BorderRadius.circular(4.0),
-                      child: Image.network(
-                        'https://cdn.pixabay.com/photo/2015/06/19/21/24/the-road-815297__340.jpg',
-                        height: 180,
-                        fit: BoxFit.fill,
-                      )),
+                    borderRadius: BorderRadius.circular(4.0),
+                    child:  FadeInImage.assetNetwork(
+                      height: 180,
+                      placeholder: 'images/app_logo.png',
+                      image: Constants.imageBaseUrl+image,
+                    ),),
                   Image.asset(
                     'images/cross.png',
                     height: 36,
@@ -54,7 +77,7 @@ class _FavouriteListItemState extends State<FavouriteListItem> {
                         height: 12,
                       ),
                       Text(
-                        "Xiaomi Mi A3",
+                        productName,
                         style: TextStyle(
                             color: MyColor.homeItemTitleColor,
                             fontSize: 12,
@@ -74,7 +97,7 @@ class _FavouriteListItemState extends State<FavouriteListItem> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    "64GB Storage",
+                                    quantity.toString()+' '+unit,
                                     style: TextStyle(
                                         color: MyColor.homeItemSubTitleColor,
                                         fontSize: 9.3,
@@ -87,25 +110,14 @@ class _FavouriteListItemState extends State<FavouriteListItem> {
                                   Row(
                                     children: <Widget>[
                                       Text(
-                                        "\$1500",
+                                        'Rs. '+productPrice,
                                         style: TextStyle(
                                             color: MyColor.homeItemTitleColor,
                                             fontSize: 10.7,
                                             fontWeight: FontWeight.w600,
                                             fontFamily: 'Gilroy'),
                                       ),
-                                      SizedBox(
-                                        width: 4,
-                                      ),
-                                      Text(
-                                        "\$2500",
-                                        style: TextStyle(
-                                            color: MyColor.homeItemSubTitleColor,
-                                            decoration: TextDecoration.lineThrough,
-                                            fontSize: 7.8,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Gilroy'),
-                                      ),
+
                                     ],
                                   )
                                 ],
@@ -117,6 +129,6 @@ class _FavouriteListItemState extends State<FavouriteListItem> {
                   ),
                 )),
           ],
-        )));
+        ));
   }
 }

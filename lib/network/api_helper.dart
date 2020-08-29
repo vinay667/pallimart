@@ -69,6 +69,26 @@ class ApiBaseHelper {
     }
     return responseJson;
   }
+  Future<dynamic> postAPIFormData(
+      String url, BuildContext context, var apiParams) async {
+    var responseJson;
+    String accessToken=UserModel.accessToken;
+    print(accessToken);
+    print(_baseUrl+url);
+    try {
+      final response = await http.post(_baseUrl + url,
+          body: json.encode(apiParams),
+          headers: {
+          "Content-type": "application/json","access-token":accessToken});
+      print(response.toString()+'ffgrg');
+      responseJson = _returnResponse(response, context);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+
 
   dynamic _returnResponse(http.Response response, BuildContext context) {
     var responseJson = jsonDecode(response.body.toString());

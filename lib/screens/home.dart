@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:pallimart/colors/colors.dart';
 import 'package:pallimart/network/api_helper.dart';
 import 'package:pallimart/screens/product_detail.dart';
+import 'package:pallimart/screens/sub_category_screen.dart';
 import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/utils/constants.dart';
 import 'package:pallimart/utils/no_internet_check.dart';
@@ -25,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String userName = '', userEmail = '';
   List<dynamic> productList=[];
+  List<dynamic> reverseList=[];
   List<dynamic> dummyList=[];
   List<dynamic> todayDealList=[];
   List<dynamic> categoryList=[];
@@ -160,11 +162,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemBuilder: (context, index) {
                                 return InkWell(
                                     onTap: () =>
-                                        Navigator.pushNamed(context, "/subc"),
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>SubCategoryScreen(categoryList[index]['id'].toString()))),
                                     child: Container(
                                       width: MediaQuery.of(context).size.width /
                                           4.3,
                                       child: Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10)
+                                        ),
                                         color: Colors.white,
                                         margin: EdgeInsets.only(
                                             bottom: 16,
@@ -183,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             FadeInImage.assetNetwork(
                                               height: 42,
                                               placeholder: 'images/app_logo.png',
-                                              image: Constants.imageBaseUrl,
+                                              image: Constants.imageBaseUrl+categoryList[index]['categoryImage'],
                                             ),
 
 
@@ -231,9 +236,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Stack(
                                         alignment: Alignment.bottomCenter,
                                         children: <Widget>[
-                                          Card(
-                                            color: Colors.white,
-                                            margin: EdgeInsets.only(bottom: 42, left: 4, right: 4),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: new BorderRadius.only(
+                                                  topLeft: const Radius.circular(10.0),
+                                                  topRight: const Radius.circular(10.0),
+                                                ),
+                                                boxShadow: [
+                                                  new BoxShadow(
+                                                    color: MyColor.themeColor.withOpacity(0.5),
+                                                    blurRadius: 7.0,
+                                                  ),
+                                                ]
+                                            ),
+
+                                            margin: EdgeInsets.only(bottom: 42, left: 4, right: 4,top: 5),
                                             child: Stack(
                                               alignment: Alignment.topRight,
                                               children: <Widget>[
@@ -366,7 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 72,
                           child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: productList.length>10?10:productList.length,
+                              itemCount: reverseList.length>10?10:reverseList.length,
                               padding: EdgeInsets.only(left: 12, right: 12),
                               itemBuilder: (context, index) {
                                 return Container(
@@ -377,7 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(4.0),
                                       child: Image.network(
-                                        Constants.imageBaseUrl+productList[index]['productImage'],
+                                        Constants.imageBaseUrl+reverseList[index]['productImage'],
                                         height: 70,
                                       )),
                                 );
@@ -394,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 200,
                           child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: productList.length>10?10:productList.length,
+                              itemCount: reverseList.length>10?10:reverseList.length,
                               padding: EdgeInsets.only(left: 12, right: 12),
                               itemBuilder: (context, index) {
                                 return GestureDetector(
@@ -426,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     height: 180.0,
                                                     fit: BoxFit.fill,
                                                     placeholder: 'images/app_logo.png',
-                                                    image: Constants.imageBaseUrl+productList[index]['productImage'],
+                                                    image: Constants.imageBaseUrl+reverseList[index]['productImage'],
                                                   ),
 
 
@@ -459,7 +477,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       height: 12,
                                                     ),
                                                     Text(
-                                                      productList[index]['productName'],
+                                                      reverseList[index]['productName'],
                                                       style: TextStyle(
                                                           color: MyColor.homeItemTitleColor,
                                                           fontSize: 12,
@@ -479,7 +497,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: <Widget>[
                                                                 Text(
-                                                                  productList[index]['productQuantity'].toString()+' '+productList[index]['productPerimeter'],
+                                                                  reverseList[index]['productQuantity'].toString()+' '+productList[index]['productPerimeter'],
                                                                   style: TextStyle(
                                                                       color: MyColor.homeItemSubTitleColor,
                                                                       fontSize: 9.3,
@@ -492,7 +510,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 Row(
                                                                   children: <Widget>[
                                                                     Text(
-                                                                      'Rs. '+productList[index]['productPrice'].toString(),
+                                                                      'Rs. '+reverseList[index]['productPrice'].toString(),
                                                                       style: TextStyle(
                                                                           color: MyColor.homeItemTitleColor,
                                                                           fontSize: 10.7,
@@ -517,7 +535,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             )),
                                                         GestureDetector(
                                                           onTap: (){
-                                                            addProduct(productList[index]['id']);
+                                                            addProduct(reverseList[index]['id']);
                                                           },
                                                           child:  Image.asset('images/home_icon_delete.png'),
 
@@ -567,6 +585,7 @@ class _HomeScreenState extends State<HomeScreen> {
 */
       setState(() {
         productList=fetchResponse['data']['product'];
+        reverseList=productList.reversed.toList();
         categoryList=fetchResponse['data']['category'];
        // todayDealList=dummyList;
       });
@@ -584,9 +603,12 @@ class _HomeScreenState extends State<HomeScreen> {
   //add product API
 
   addProduct(int productId) async {
+    var _fromData = {
+      'product_id': productId.toString(),
+    };
     ApiBaseHelper helper=new ApiBaseHelper();
     APIDialog.showAlertDialog(context, 'Adding to cart...');
-    var response=await helper.postAPI('product/api/cart/add?product_id=$productId', context);
+    var response=await helper.postAPIFormData('product/api/cart/add', context,_fromData);
     Navigator.pop(context);
     if(response['status']=='success')
       {
