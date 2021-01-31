@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:pallimart/callbacks/button_click_callback.dart';
 import 'package:pallimart/callbacks/text_field_callback.dart';
@@ -6,6 +8,7 @@ import 'package:pallimart/utils/constants2.dart';
 import 'package:pallimart/widgets/appbar_title.dart';
 import 'package:pallimart/widgets/button_widget.dart';
 import 'package:pallimart/widgets/text_input_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -17,6 +20,8 @@ class _ProfileScreenState extends State<ProfileScreen>
   String _password;
   String _email, _phoneNumber, _userName;
   final FocusNode emailFocus = FocusNode();
+  var textControllerName = new TextEditingController();
+  var textControllerEmail = new TextEditingController();
   final FocusNode userNameFocus = FocusNode();
   final FocusNode phoneNumberFocus = FocusNode();
   final FocusNode passwordFocus = FocusNode();
@@ -106,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   Container(
                       alignment: Alignment.center,
                       child: Text(
-                        "Angelina Mark",
+                        _userName,
                         style: TextStyle(
                             fontSize: 18,
                             color: MyColor.homeTitleColor,
@@ -118,14 +123,14 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                   Column(
                     children: <Widget>[
-                      MyTextInputField(this, 'Name:', 'user_name',
-                          userNameFocus, phoneNumberFocus),
+                      MyTextInputField(this, 'Name:','user_name',
+                          userNameFocus, phoneNumberFocus,textControllerName),
                       MyTextInputField(this, 'Phone No:', 'phone',
-                          phoneNumberFocus, emailFocus),
+                          phoneNumberFocus, emailFocus,null),
                       MyTextInputField(this, 'Email Id:', 'email', emailFocus,
-                          passwordFocus),
+                          passwordFocus,textControllerEmail),
                       MyTextInputField(
-                          this, 'Password', 'password', passwordFocus, null),
+                          this, 'Password', 'password', passwordFocus, null,null),
                     ],
                   ),
                 ],
@@ -151,7 +156,21 @@ class _ProfileScreenState extends State<ProfileScreen>
         break;
     }
   }
-
+  setUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userName = prefs.getString('name') ?? '';
+      textControllerName.text=_userName;
+      textControllerEmail.text=prefs.getString('email') ?? '';
+     // userEmail = prefs.getString('email') ?? '';
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setUserData();
+  }
   @override
   void onButtonClickListener(int id) {
     if (id == Constants2.BUTTON_CLICK_ID) {

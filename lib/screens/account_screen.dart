@@ -2,17 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pallimart/callbacks/type_click_callback.dart';
 import 'package:pallimart/colors/colors.dart';
+import 'package:pallimart/models/user_model.dart';
+import 'package:pallimart/screens/add_address_screen.dart';
+import 'package:pallimart/screens/all_address_screen.dart';
+import 'package:pallimart/screens/my_orders_screen.dart';
+import 'package:pallimart/screens/profile_screen.dart';
+import 'package:pallimart/utils/login_Dialog.dart';
 import 'package:pallimart/widgets/account_item.dart';
 import 'package:pallimart/widgets/appbar_title.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountScreen extends StatefulWidget {
   @override
   _AccountScreenState createState() => _AccountScreenState();
 }
-
 class _AccountScreenState extends State<AccountScreen>
     implements TypeClickListener {
-  final _controller = ScrollController();
+ String username='';
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +82,7 @@ class _AccountScreenState extends State<AccountScreen>
           Container(
               alignment: Alignment.center,
               child: Text(
-                "Angelina Mark",
+                username,
                 style: TextStyle(
                     fontSize: 18,
                     color: MyColor.homeTitleColor,
@@ -96,19 +102,52 @@ class _AccountScreenState extends State<AccountScreen>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        AccountItem(
-                          callback: this,
-                          image: 'images/icon_order.png',
-                          title: 'Order',
-                          subTitle: 'Check your order status',
+                        InkWell(
+                          onTap:(){
+
+
+                            if(UserModel.accessToken=='notLogin')
+                            {
+                              LoginDialog.showLogInDialog(context, 'Login to view Orders !!');
+                            }
+                            else{
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>MyOrdersScreen()));
+
+                            }
+
+
+
+
+                },
+                          child:  AccountItem(
+                            image: 'images/icon_order.png',
+                            title: 'Order',
+                            subTitle: 'Check your order status',
+                          ),
                         ),
                         Divider(),
-                        AccountItem(
-                          callback: this,
-                          image: 'images/icon_profile.png',
-                          title: 'Profile Detail',
-                          subTitle: 'Change your profile detail & password',
-                        ),
+
+                        InkWell(
+                          onTap: (){
+
+                            if(UserModel.accessToken=='notLogin')
+                              {
+                                LoginDialog.showLogInDialog(context, 'Login to view Profile !!');
+                              }
+                            else{
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen()));
+
+                            }
+
+
+
+                          },
+                          child:   AccountItem(
+                            image: 'images/icon_profile.png',
+                            title: 'Profile Detail',
+                            subTitle: 'Change your profile detail & password',
+                          ),
+                        )
                       ],
                     )),
               ),
@@ -121,21 +160,20 @@ class _AccountScreenState extends State<AccountScreen>
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         AccountItem(
-                          callback: this,
                           image: 'images/icon_wallet.png',
                           title: 'Your Credit',
                           subTitle: 'Manage all your refunds & gift cards',
                         ),
                         Divider(),
                         AccountItem(
-                          callback: this,
+
                           image: 'images/icon_card.png',
                           title: 'Saved Cards',
                           subTitle: 'Save your cards for faster checkout',
                         ),
                         Divider(),
                         AccountItem(
-                          callback: this,
+
                           image: 'images/icon_coupon.png',
                           title: 'Coupons',
                           subTitle: 'Manage coupons for additional Discount',
@@ -151,12 +189,17 @@ class _AccountScreenState extends State<AccountScreen>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        AccountItem(
-                          callback: this,
-                          image: 'images/icon_address.png',
-                          title: 'Address',
-                          subTitle: 'Save address for hassle free checkout',
-                        ),
+
+                        InkWell(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>AllAddressScreen()));
+                          },
+                          child:   AccountItem(
+                            image: 'images/icon_address.png',
+                            title: 'Address',
+                            subTitle: 'Save address for hassle free checkout',
+                          ),
+                        )
                       ],
                     )),
               )
@@ -171,22 +214,35 @@ class _AccountScreenState extends State<AccountScreen>
   void onTypeClickListener(String type) {
     switch (type) {
       case 'Profile Detail':
-        Navigator.pushNamed(context, '/profile');
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen()));
         break;
       case 'Saved Cards':
         Navigator.pushNamed(context, '/add_card');
         break;
       case 'Address':
-        Navigator.pushNamed(context, '/add_address');
         break;
       case 'Coupons':
         Navigator.pushNamed(context, '/coupon');
         break;
       case 'Order':
-        Navigator.pushNamed(context, '/orders');
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>MyOrdersScreen()));
         break;
 
 
     }
+  }
+
+  setUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString('name') ?? '';
+     // userEmail = prefs.getString('email') ?? '';
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setUserData();
   }
 }

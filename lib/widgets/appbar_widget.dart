@@ -10,6 +10,7 @@ class AppbarWidget extends AppBar {
       ButtonClickListener clickListener,
       int counter,
       bool isBack,
+       Function onTap,
       bool isShowAction=true,
       String type,
       String title,
@@ -24,26 +25,16 @@ class AppbarWidget extends AppBar {
                     Icons.keyboard_backspace,
                     color: MyColor.homeTextColor,
                   ))
-              : Padding(
-            padding: EdgeInsets.only(left: 10,top: 5,bottom: 5),
-            child:Container(
-                height: 40,
-                width: 40,
-                decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(width:1,color: Colors.blueGrey),
-                    image: new DecorationImage(
-                        fit: BoxFit.fill,
-                        image: AssetImage(
-  'images/app_logo.png'))),
- /*CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.blueGrey.withOpacity(0.7),
-              child: Image.asset(
-                'images/app_logo.png',
-              ),
-            ),*/
-          )),
+              : GestureDetector(
+            onTap: (){
+              onTap();
+            },
+            child: Padding(
+                padding: EdgeInsets.only(left: 10,top: 5,bottom: 5),
+                child:Container(
+                  child: Icon(Icons.dehaze,color: MyColor.themeColor,size: 25),
+                )),
+          ),
           // you can put Icon as well, it accepts any widget.
           centerTitle: true,
           title: title != null

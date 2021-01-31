@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pallimart/colors/colors.dart';
+import 'package:pallimart/models/user_model.dart';
 import 'package:pallimart/utils/constants.dart';
+import 'package:pallimart/utils/login_Dialog.dart';
 
 class FavouriteListItem extends StatefulWidget {
   String image,productName,productPrice,unit;
-  int quantity;
+  String quantity;
   FavouriteListItem(this.image,this.productName,this.productPrice,this.unit,this.quantity);
   @override
   _FavouriteListItemState createState() => _FavouriteListItemState(image,productName,productPrice,unit,quantity);
@@ -13,7 +15,8 @@ class FavouriteListItem extends StatefulWidget {
 
 class _FavouriteListItemState extends State<FavouriteListItem> {
   String image,productName,productPrice,unit;
-  int quantity;
+  String quantity;
+
   _FavouriteListItemState(this.image,this.productName,this.productPrice,this.unit,this.quantity);
 
   @override
@@ -50,11 +53,11 @@ class _FavouriteListItemState extends State<FavouriteListItem> {
                       placeholder: 'images/app_logo.png',
                       image: Constants.imageBaseUrl+image,
                     ),),
-                  Image.asset(
+                 /* Image.asset(
                     'images/cross.png',
                     height: 36,
                     width: 36,
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -122,7 +125,20 @@ class _FavouriteListItemState extends State<FavouriteListItem> {
                                   )
                                 ],
                               )),
-                          Image.asset('images/home_icon_delete.png')
+                          GestureDetector(
+                            onTap: (){
+                              if(UserModel.accessToken=='notLogin')
+                                {
+                                  LoginDialog.showLogInDialog(context, 'Login to add Product !!');
+                                }
+                              else{
+
+
+
+                              }
+                            },
+                            child: Image.asset('images/home_icon_delete.png'),
+                          )
                         ],
                       )
                     ],

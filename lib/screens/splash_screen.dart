@@ -4,29 +4,53 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pallimart/colors/colors.dart';
 import 'package:pallimart/screens/bottom_tab_screen.dart';
+import 'package:pallimart/screens/login_screen.dart';
 import 'package:pallimart/utils/slider_layout_view.dart';
 import 'home.dart';
 class SplashScreen extends StatefulWidget {
-  String token;
-  SplashScreen(this.token);
+  String token,pageValue;
+  SplashScreen(this.token,this.pageValue);
   @override
-  _SplashScreenState createState() => _SplashScreenState(token);
+  _SplashScreenState createState() => _SplashScreenState(token,pageValue);
 }
 
 class _SplashScreenState extends State<SplashScreen> {
   String token;
-  _SplashScreenState(this.token);
+  String pageValue;
+  _SplashScreenState(this.token,this.pageValue);
   @override
   void initState() {
     super.initState();//28c17e
     Timer(
         Duration(seconds: 3),
             () =>
-                token=='notLogin'?
+                token!='notLogin'?
+                //user is logged in
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => SliderLayoutView())):
+                    builder: (BuildContext context) => BottomTabScreen())):
+
+
+
+                pageValue=='login'?Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (BuildContext context) => LoginScreen())):
+
+                    pageValue=='home'?
+
+/*
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (BuildContext context) => BottomTabScreen())):*/
+
+
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (BuildContext context) => BottomTabScreen()))
+                    builder: (BuildContext context) => SliderLayoutView())):
+
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => SliderLayoutView()))
+
+
+
+
+
     );
   }
 
@@ -54,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     child: Container(
                       height: 145,
                       width: 140,
-                      child: Center(child: Image.asset('images/app_logo.png',width: 100,height: 100,),),
+                      child: Center(child: Image.asset('images/logo.png',width: 100,height: 100,),),
                     ),
 
 
@@ -65,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 padding: EdgeInsets.only(top: 20),
                 transform: Matrix4.translationValues(00.0, -60.0, 0.0),
                 child:  Text(
-                  'PALLIMARKET',
+                  'PALLIMART',
                   style: TextStyle(fontSize: 22,color: Colors.white,fontFamily: 'GilroySemibold',fontWeight: FontWeight.bold,letterSpacing: 3),
 
                 ),

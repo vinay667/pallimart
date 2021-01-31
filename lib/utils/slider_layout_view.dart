@@ -1,26 +1,25 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pallimart/screens/home.dart';
 import 'package:pallimart/screens/login_screen.dart';
 import 'package:pallimart/utils/slide_dots.dart';
 import 'package:pallimart/utils/slide_item.dart';
-import 'constants.dart';
 class SliderLayoutView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _SliderLayoutViewState();
 }
 class _SliderLayoutViewState extends State<SliderLayoutView> {
-  int _currentPage = 0;
+  static int _currentPage = 0;
   List<String> imagesList=['images/1_u.jpg','images/2_u.jpg','images/3_u.jpg','images/4_u.jpg,'];
-  final PageController _pageController = PageController(initialPage: 0);
+  final PageController _pageController = PageController(initialPage: _currentPage,keepPage: true, viewportFraction: 1);
 
   @override
   void initState() {
     super.initState();
+    print('trigger done ');
     Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      if (_currentPage < 2) {
-        _currentPage++;
+      if (_currentPage < 3) {
+        _currentPage= _currentPage++;
       } else {
         _currentPage = 0;
       }
@@ -34,6 +33,7 @@ class _SliderLayoutViewState extends State<SliderLayoutView> {
   }
 
   _onPageChanged(int index) {
+    print('huu');
     setState(() {
       _currentPage = index;
     });
@@ -60,10 +60,23 @@ class _SliderLayoutViewState extends State<SliderLayoutView> {
               children: <Widget>[
                 GestureDetector(
                   onTap: (){
-                    if(_currentPage==3)
-                      {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
-                      }
+
+                    print(_currentPage.toString()+'rtrtrt');
+                    if(_currentPage<3)
+                    {
+                      setState(() {
+                        _currentPage++;
+                        //_pageController.jumpToPage(_currentPage);
+                        _pageController.animateToPage(_currentPage, curve: Curves.decelerate, duration: Duration(milliseconds: 200));
+                      });
+                      // _currentPage=_currentPage+1;
+                    }
+                    else if(_currentPage==3)
+                    {
+
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+                    //  _currentPage=0;
+                    }
                     //_onPageChanged(_currentPage);
                   },
                   child: Align(
@@ -71,32 +84,35 @@ class _SliderLayoutViewState extends State<SliderLayoutView> {
                     child: Padding(
                       padding: EdgeInsets.only(right: 15.0, bottom: 15.0),
                       child: Text(
-                        Constants.NEXT,
+                        'NEXT',
                         style: TextStyle(decoration:TextDecoration.none,fontSize: 15,color: Colors.white,fontFamily: 'GilroySemibold',fontWeight: FontWeight.bold,letterSpacing: 3),
                       ),
                     ),
                   ),
                 ),
-               GestureDetector(
-                 onTap: (){
-
-                   Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+                GestureDetector(
+                  onTap: (){
 
 
-                 },
-                 child:  Align(
-                   alignment: Alignment.bottomLeft,
-                   child: Padding(
-                     padding: EdgeInsets.only(left: 15.0, bottom: 15.0),
-                     child: Text(
-                       Constants.SKIP,
-                       style: TextStyle(decoration:TextDecoration.none,fontSize: 15,color: Colors.white,fontFamily: 'GilroySemibold',fontWeight: FontWeight.bold,letterSpacing: 3),
-                     ),
-                   ),
-                 ),
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+                    //_currentPage=0;
+                    //Navigator.push(context, MaterialPageRoute(builder: (context)=>RefineSearchScreen()));
 
 
-               ),
+                  },
+                  child:  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 15.0, bottom: 15.0),
+                      child: Text(
+                        'SKIP',
+                        style: TextStyle(decoration:TextDecoration.none,fontSize: 15,color: Colors.white,fontFamily: 'GilroySemibold',fontWeight: FontWeight.bold,letterSpacing: 3),
+                      ),
+                    ),
+                  ),
+
+
+                ),
                 Container(
                   alignment: AlignmentDirectional.bottomCenter,
                   margin: EdgeInsets.only(bottom: 20.0),

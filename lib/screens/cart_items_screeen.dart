@@ -5,12 +5,14 @@ import 'package:pallimart/callbacks/button_click_callback.dart';
 import 'package:pallimart/colors/colors.dart';
 import 'package:pallimart/network/api_helper.dart';
 import 'package:pallimart/screens/all_address_screen.dart';
+import 'package:pallimart/screens/select_address_screen.dart';
 import 'package:pallimart/utils/constants.dart';
 
 import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/utils/no_internet_check.dart';
 import 'package:pallimart/widgets/appbar_widget.dart';
 import 'package:pallimart/widgets/button_widget.dart';
+import 'package:pallimart/widgets/text_widget.dart';
 import 'package:toast/toast.dart';
 
 class CartItemsScreen extends StatefulWidget {
@@ -22,6 +24,7 @@ class CartItemsState extends State<CartItemsScreen>
 
   List<dynamic> cartItems=[];
   String cartCount='0',cartSubTotal='0',cartTotal='0';
+  String imageURI='',emptyString='';
 
 
   @override
@@ -29,19 +32,19 @@ class CartItemsState extends State<CartItemsScreen>
     return Scaffold(
       appBar: AppbarWidget(
         context: context,
-        clickListener: this,
+       // clickListener: this,
         counter: 0,
         isBack: true,
         type: "shopping",
         title: "Shopping Cart",
-        actionIcon: 'images/action_fav.png',
+
       ),
       body: Container(
           color: Colors.white,
           child: Column(
             children: <Widget>[
               Expanded(
-                child: ListView(
+                child: cartItems.length!=0?ListView(
                   scrollDirection: Axis.vertical,
                   children: <Widget>[
                     SizedBox(
@@ -171,29 +174,90 @@ class CartItemsState extends State<CartItemsScreen>
                                               ],
                                             ),
                                           ),
-                                          Container(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child:Container(
-                                              width: 58.3,
-                                              height: 17.7,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                color: MyColor.lightGrey,
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    10),
+
+                                          Row(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.only(top: 10),
+                                                child:Container(
+                                                  width: 58.3,
+                                                  height: 17.7,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    color: MyColor.lightGrey,
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        10),
+                                                  ),
+                                                  child: Text(
+                                                    cartItems[position]['product']['productQuantity'].toString()+' '+cartItems[position]['product']['productPerimeter'],
+                                                    style: TextStyle(
+                                                        fontSize: 9.3,
+                                                        fontFamily: 'Gilroy',
+                                                        color: MyColor
+                                                            .homeItemTitleColor,
+                                                        fontWeight:
+                                                        FontWeight.w600),
+                                                  ),
+                                                ),
                                               ),
-                                              child: Text(
-                                                cartItems[position]['product']['productQuantity'].toString()+' '+cartItems[position]['product']['productPerimeter'],
-                                                style: TextStyle(
-                                                    fontSize: 9.3,
-                                                    fontFamily: 'Gilroy',
-                                                    color: MyColor
-                                                        .homeItemTitleColor,
-                                                    fontWeight:
-                                                    FontWeight.w600),
+
+                                              SizedBox(width: 20),
+
+                                              Container(
+                                                width: 94,
+                                                height: 32,
+                                                margin: EdgeInsets.only(top: 10),
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(8),
+                                                    border: Border.all(
+                                                        color:
+                                                        MyColor.themeColor,
+                                                        width: 2)),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                      },
+                                                      child: Container(
+                                                          width: 30,
+                                                          child: Center(
+                                                              child: Image.asset(
+                                                                'images/minus.png',
+                                                                width: 11,
+                                                                height: 15,
+                                                                color: Colors.black,
+                                                              ))),
+                                                    ),
+                                                    Container(
+                                                        width: 30,
+                                                        height: 30,
+                                                        color:
+                                                        MyColor.themeColor,
+                                                        child: Center(
+                                                            child: Text('1',style: TextStyle(
+                                                              fontSize: 15,color: Colors.white,fontFamily: 'Gilroy',fontWeight: FontWeight.bold
+                                                            ),)
+                                                        )),
+                                                    GestureDetector(
+                                                      onTap: () {
+
+
+
+                                                      },
+                                                      child: Container(
+                                                          width: 30,
+                                                          child: Center(
+                                                              child: Image.asset(
+                                                                'images/add.png',
+                                                                width: 12,
+                                                                height: 12,
+                                                              ))),
+                                                    )
+                                                  ],
+                                                ),
                                               ),
-                                            ),
+                                            ],
                                           ),
                                           SizedBox(
                                             height: 12,
@@ -515,9 +579,34 @@ class CartItemsState extends State<CartItemsScreen>
                           color: MyColor.grey,
                         )),
                   ],
-                ),
+                ):Center(
+                  child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+
+//'images/cart_empty.png'
+                      Image.asset(imageURI,width: 110,height: 110,),
+
+
+//'No items in your cart !!'
+                      Padding(
+                        padding: EdgeInsets.only(left: 15, top: 15),
+                        child: TextWidget(
+                            emptyString, Colors.black87, 18),
+                      ),
+
+
+                      SizedBox(height: 30)
+
+
+
+
+
+                    ],
+                  ),
+                )
               ),
-              MyButton(callback: this, title: "Continue")
+             cartItems.length!=0? MyButton(callback: this, title: "Continue"):Container()
 
 
 
@@ -542,6 +631,11 @@ class CartItemsState extends State<CartItemsScreen>
     });
     if(cartItems.length==0)
       {
+        setState(() {
+          imageURI='images/cart_empty.png';
+          emptyString='No items in your cart !!';
+        });
+
         Toast.show('No Products found !!', context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: MyColor.noInternetColor);
       }
   }
@@ -616,7 +710,7 @@ removeProduct(productId);
   @override
   void onButtonClickListener(int id) {
 
-    Navigator.push(context, CupertinoPageRoute(builder: (context) =>AllAddressScreen()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>SelectAddressScreen()));
 
 
 

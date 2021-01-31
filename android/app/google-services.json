@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1090488923965",
+    "project_id": "pallimart-1611992054294",
+    "storage_bucket": "pallimart-1611992054294.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1090488923965:android:1eff8c8b5e7ba169e0b754",
+        "android_client_info": {
+          "package_name": "com.pallimart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1090488923965-v80aevbup2t10r1hc7c7i85cfeqq3mqf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAyhlgjDa7KhHZnaYHaP8tYtqtN4xrQkI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1090488923965-v80aevbup2t10r1hc7c7i85cfeqq3mqf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

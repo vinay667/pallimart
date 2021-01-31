@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pallimart/colors/colors.dart';
 import 'package:pallimart/network/api_helper.dart';
+import 'package:pallimart/screens/add_address_screen.dart';
 import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/utils/no_internet_check.dart';
 import 'package:pallimart/widgets/address_widget.dart';
@@ -14,6 +15,7 @@ class AllAddressScreen extends StatefulWidget {
 class AllAddressState extends State<AllAddressScreen> {
 
   String name='',phone='',email='',address='';
+  List<dynamic> addressList=[];
 
 
   @override
@@ -25,7 +27,7 @@ class AllAddressState extends State<AllAddressScreen> {
           color: MyColor.textBlueColor, //change your color here
         ),
         title: Text(
-          "Select Address",
+          "All Address",
           style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,
@@ -53,18 +55,28 @@ class AllAddressState extends State<AllAddressScreen> {
 
           Expanded(
             child: ListView.builder(
-                itemCount: 1,
+                itemCount: addressList.length,
                 itemBuilder: (BuildContext context, int position) {
                   return Padding(
                     padding: EdgeInsets.only(left: 15, right: 15, top: 15),
-                    child: AddressWidget(name,phone,email,address),
+                    child: AddressWidget2(addressList[position]['firstName']+' '+addressList[position]['lastName'],addressList[position]['phoneNumber'].toString(),addressList[position]['emailAddress'],addressList[position]['address'],(){
+
+                      removeAddress(addressList[position]['id']);
+
+                    }),
                   );
                 }),
           ),
          GestureDetector(
-           onTap: (){
+           onTap: ()async{
 
-      Navigator.push(context, CupertinoPageRoute(builder: (context)=>PaymentScreen()));
+     // Navigator.push(context, CupertinoPageRoute(builder: (context)=>PaymentScreen()));
+        var result=await Navigator.push(context, CupertinoPageRoute(builder: (context)=>AddAddressScreen()));
+
+        if(result!=null)
+          {
+            checkInternetAPIcall();
+          }
 
 
 
@@ -89,7 +101,7 @@ class AllAddressState extends State<AllAddressScreen> {
                        fit: BoxFit.fill),
                  ),
                  child: Text(
-                   "Continue",
+                   "Add New Address",
                    style: TextStyle(
                        color: MyColor.whiteColor,
                        fontFamily: 'Gilroy',
@@ -116,12 +128,37 @@ class AllAddressState extends State<AllAddressScreen> {
     Navigator.pop(context);
     print(response);
     setState(() {
-      name=response['data']['shippingAddress']['firstName']+' '+response['data']['shippingAddress']['lastName'];
-      phone=response['data']['shippingAddress']['phoneNumber'].toString();
-      email=response['data']['shippingAddress']['emailAddress'];
-      address=response['data']['shippingAddress']['address'];
+      addressList=response['data']['customerAddresses'];
     });
   }
+
+  removeAddress(int addID) async {
+    var _fromData = {
+      'id': addID.toString(),
+    };
+
+    print(_fromData);
+    ApiBaseHelper helper = new ApiBaseHelper();
+    APIDialog.showAlertDialog(context, 'Removing address...');
+    var response = await helper.postAPIFormData(
+        'product/api/delete/shipping/address', context, _fromData);
+    Navigator.pop(context);
+    if (response['status'] == 'success') {
+      Toast.show('Address removed Successfully !!', context,
+          duration: Toast.LENGTH_SHORT,
+          gravity: Toast.BOTTOM,
+          backgroundColor: Colors.black);
+      Navigator.pop(context);
+    } else {
+      Toast.show(response['message'], context,
+          duration: Toast.LENGTH_SHORT,
+          gravity: Toast.BOTTOM,
+          backgroundColor: MyColor.noInternetColor);
+    }
+    print(response);
+  }
+
+
 
   void checkInternetAPIcall() async {
     if (await InternetCheck.check() == true) {

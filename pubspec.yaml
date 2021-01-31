@@ -30,6 +30,10 @@ dependencies:
   connectivity: ^0.4.2
   flutter_launcher_icons: ^0.6.1
   dio: ^3.0.10
+  geolocator: ^5.3.2+2
+  firebase_auth: ^0.20.0+1
+  google_sign_in: ^4.5.9
+  flutter_facebook_login: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -59,16 +63,26 @@ flutter:
     - images/icon_appliance.png
     - images/icon_beauty.png
     - images/logo.png
+    - images/add.png
+    - images/minus.png
+    - images/rating_empty.png
+    - images/back_ic.png
     - images/hamber2.png
     - images/icon_mobile.png
     - images/icon_furniture.png
+    - images/cart_empty.png
     - images/icon_jewelry.png
     - images/icon_watches.png
     - images/icon_footwear.png
+    - images/google_ic.png
+    - images/fb_ic.png
     - images/icon_bag.png
     - images/icon_kids_wear.png
     - images/app_logo.png
     - images/1_u.jpg
+    - images/1.jpg
+    - images/2.jpg
+    - images/3.jpg
     - images/oil.jpg
     - images/purse.jpg
     - images/2_u.jpg

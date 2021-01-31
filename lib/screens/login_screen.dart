@@ -5,7 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pallimart/colors/colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:pallimart/models/user_model.dart';
 import 'package:pallimart/screens/sign_up_screen.dart';
+import 'package:pallimart/screens/login_demo.dart';
+import 'package:pallimart/screens/social_sign_up_screen.dart';
 import 'package:pallimart/widgets/text_widget.dart';
 import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/utils/no_internet_check.dart';
@@ -25,6 +28,7 @@ class LoginScreenState extends State<LoginScreen>
   GlobalKey<ScaffoldState> key = new GlobalKey<ScaffoldState>();
   var textControllerName = new TextEditingController();
   var textControllerPassword = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +43,7 @@ class LoginScreenState extends State<LoginScreen>
             ),
             margin: EdgeInsets.zero,
             child: Container(
-              height: 370,
+              height: 410,
               child: Column(
                 children: <Widget>[
                   Row(
@@ -212,6 +216,25 @@ class LoginScreenState extends State<LoginScreen>
 
                   ),
 
+                  SizedBox(height: 20),
+
+                 Center(
+                   child:GestureDetector(
+                     onTap: (){
+                       Navigator.pushReplacementNamed(context, '/bottom');
+                     },
+                     child: TextWidget(
+                         'Skip Login', Colors.brown, 17),
+                   )
+                 )
+
+
+
+
+
+
+
+
 
                 ],
               ),
@@ -232,7 +255,7 @@ class LoginScreenState extends State<LoginScreen>
       try {
         http.Response response;
         response = await http.post(
-            'http://pallimart.com/product/api/customer/login',
+            'https://pallimart.com/product/api/customer/login',
             body: json.encode(collectedAuthData),
             headers: {
               'Content-Type': 'application/json',
@@ -266,6 +289,7 @@ class LoginScreenState extends State<LoginScreen>
       prefs.setString('name', name);
       prefs.setString('email', email);
       prefs.setString('access_token', access_token);
+      UserModel.setAccessToken(access_token);
 
     }
 
@@ -278,4 +302,19 @@ class LoginScreenState extends State<LoginScreen>
     }
   }
 
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    setPageData();
+
+
+  }
+  setPageData()
+  async {
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+    prefs.setString('page_value', 'login');
+  }
 }

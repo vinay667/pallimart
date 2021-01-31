@@ -1,29 +1,33 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pallimart/colors/colors.dart';
 import 'package:pallimart/models/user_model.dart';
+import 'package:pallimart/network/api_helper.dart';
 import 'package:pallimart/screens/product_detail.dart';
 import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/utils/constants.dart';
 import 'package:pallimart/utils/no_internet_check.dart';
 import 'package:pallimart/widgets/favourite_list_item.dart';
 import 'package:http/http.dart' as http;
+import 'package:pallimart/widgets/search_box_widget.dart';
 import 'package:toast/toast.dart';
-
 class FavouriteScreen extends StatefulWidget {
   String scategoryId;
-  FavouriteScreen(this.scategoryId);
+  bool showToolbar;
+  FavouriteScreen(this.scategoryId,this.showToolbar);
   @override
-  _FavouriteScreenState createState() => _FavouriteScreenState(scategoryId);
+  _FavouriteScreenState createState() => _FavouriteScreenState(scategoryId,showToolbar);
 }
 
 class _FavouriteScreenState extends State<FavouriteScreen> {
   String scategoryId;
   List<dynamic> productList=[];
+  bool showToolbar;
+  List<dynamic> searchList=[];
   String productCount='0';
-  _FavouriteScreenState(this.scategoryId);
+  var textControllerSearch=new TextEditingController();
+  _FavouriteScreenState(this.scategoryId,this.showToolbar);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +36,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            scategoryId=='NA'?
+            showToolbar==false?
             Container():Card(
               color: Colors.white,
               margin: EdgeInsets.zero,
@@ -89,7 +93,74 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                   )),
             ),
             SizedBox(
-              height: 16,
+              height: 5,
+            ),
+
+
+            // search box
+           Card(
+             margin: EdgeInsets.only(left: 25,right: 25,top: 25),
+             elevation: 5,
+             shape: RoundedRectangleBorder(
+               borderRadius: BorderRadius.circular(10)
+             ),
+             child:  Container(
+
+               child: TextField(
+                 controller: textControllerSearch,
+                   expands: false,
+                   decoration: InputDecoration(
+                       suffixIcon: GestureDetector(
+                         onTap: (){
+                           setState(() {
+                            productCount='0';
+                           });
+                           searchProducts();
+                         },
+                         child: Image.asset('images/icon_search.png',width: 20,height: 20,color: MyColor.themeColor,),
+                       ),
+                       hintText: "Search for brand & products",
+                       hintStyle: TextStyle(color: MyColor.homeItemSubTitleColor),
+                       contentPadding: const EdgeInsets.only(
+                           left: 12, bottom: 1.0, top: 1.0, right: 12),
+                       focusedBorder: OutlineInputBorder(
+                           borderRadius: BorderRadius.all(Radius.circular(90.0)),
+                           borderSide: BorderSide(
+                             color: Colors.transparent,
+                           )),
+                       enabledBorder: OutlineInputBorder(
+                           borderRadius: BorderRadius.all(Radius.circular(90.0)),
+                           borderSide: BorderSide(
+                             color: Colors.transparent,
+                           )),
+                       fillColor: MyColor.whiteColor),
+                   style: TextStyle(
+                       color: Colors.black87,
+                       fontSize: 15,
+                       fontFamily: 'Gilroy',
+                       fontWeight: FontWeight.w600),
+                   textInputAction: TextInputAction.search,
+                   maxLines: 1,
+                   onChanged: (text) {
+                   if(textControllerSearch.text=='')
+                     {
+                       setState(() {
+
+                         productCount=productList.length.toString();
+                       });
+                     }
+
+
+
+
+
+
+                   }),
+             ),
+           ),
+
+            SizedBox(
+              height: 20,
             ),
             Container(
               margin: EdgeInsets.only(left: 16),
@@ -106,7 +177,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               height: 10,
             ),
             Expanded(
-              child: GridView.builder(
+              child: textControllerSearch.text.length==0?GridView.builder(
                   padding: EdgeInsets.only(left: 8, right: 8),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -116,14 +187,31 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                   itemCount: productList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return GestureDetector(
-                      onTap: (){
-                    Navigator.push(context, CupertinoPageRoute(builder: (context)=>ProductDetail(productList[index]['id'].toString(),productList[index]['productName'],productList[index]['productQuantity'].toString()+' '+productList[index]['productPerimeter'],productList[index]['productPrice'].toString(),Constants.imageBaseUrl+productList[index]['productImage'],productList[index]['productDescription'])));
-
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 5,right: 5),
-                        child: FavouriteListItem(productList[index]['productImage'],productList[index]['productName'],productList[index]['productPrice'].toString(),productList[index]['productPerimeter'],productList[index]['productQuantity']),
-                      )
+                        onTap: (){
+                          Navigator.push(context, CupertinoPageRoute(builder: (context)=>ProductDetail(productList[index]['id'].toString(),productList[index]['productName'],productList[index]['productQuantity'].toString()+' '+productList[index]['productPerimeter'],productList[index]['productPrice'].toString(),Constants.imageBaseUrl+productList[index]['productImage'],productList[index]['productDescription'],productList[index]['subCategoryId'].toString())));
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 5,right: 5),
+                          child: FavouriteListItem(productList[index]['productImage'],productList[index]['productName'],productList[index]['productPrice'].toString(),productList[index]['productPerimeter'],productList[index]['productQuantity'].toString(),
+                        )
+                    ));
+                  }):GridView.builder(
+                  padding: EdgeInsets.only(left: 8, right: 8),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: .8),
+                  itemCount: searchList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, CupertinoPageRoute(builder: (context)=>ProductDetail(searchList[index]['id'].toString(),searchList[index]['productName'],searchList[index]['productQuantity'].toString()+' '+searchList[index]['productPerimeter'],searchList[index]['productPrice'].toString(),Constants.imageBaseUrl+searchList[index]['productImage'],searchList[index]['productDescription'],searchList[index]['subCategoryId'].toString())));
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 5,right: 5),
+                          child: FavouriteListItem(searchList[index]['productImage'],searchList[index]['productName'],searchList[index]['productPrice'].toString(),searchList[index]['productPerimeter'],searchList[index]['productQuantity'].toString()),
+                        )
                     );
                   }),
             ),
@@ -151,7 +239,6 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
           fetchProductsNormal();
         }
       else{
-
         fetchProducts();
       }
     } else {
@@ -160,7 +247,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     }
   }
 
-  Future<Map<String, dynamic>> fetchProducts() async {
+  fetchProducts() async {
     String message = '';
     var formData={
       'subCategoryId':scategoryId
@@ -192,7 +279,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       Navigator.pop(context);
     }
   }
-  Future<Map<String, dynamic>> fetchProductsNormal() async {
+   fetchProductsNormal() async {
     String message = '';
     APIDialog.showAlertDialog(context, 'Please wait...');
     try {
@@ -202,22 +289,10 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       );
       Map<String, dynamic> fetchResponse = json.decode(response.body);
       print(fetchResponse);
-      /* dummyList=fetchResponse['data']['product'];
-      if(dummyList.length>10)
-      {
-        for(int i=10;i<=dummyList.length;i++)
-        {
-          dummyList.removeAt(i);
-        }
-      }
-*/
       setState(() {
         productList=fetchResponse['data']['product'];
         productCount=productList.length.toString();
       });
-
-      // print(todayDealList.length.toString()+'dgff');
-
       Navigator.pop(context);
     } catch (errorMessage) {
       message = errorMessage.toString();
@@ -226,4 +301,45 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     }
   }
 
+
+
+  searchProducts() async {
+    var _fromData = {
+      'productName': textControllerSearch.text,
+    };
+    print(_fromData);
+    ApiBaseHelper helper=new ApiBaseHelper();
+    APIDialog.showAlertDialog(context, 'Please wait...');
+    var response=await helper.postAPIFormData('product/api/searchProducts', context,_fromData);
+    Navigator.pop(context);
+    setState(() {
+      searchList.clear();
+      searchList=response['data'];
+      productCount=searchList.length.toString();
+    });
+    print(response);
+  }
+
+
+  addProduct(int productId) async {
+    var _fromData = {
+      'product_id': productId.toString(),
+      'product_qty': 1,
+    };
+
+    print(_fromData);
+    ApiBaseHelper helper=new ApiBaseHelper();
+    APIDialog.showAlertDialog(context, 'Adding to cart...');
+    var response=await helper.postAPIFormData('product/api/cart/add', context,_fromData);
+    Navigator.pop(context);
+    if(response['status']=='success')
+    {
+      Toast.show('Product added to cart !!', context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: MyColor.themeColor);
+    }
+    else
+    {
+      Toast.show(response['message'], context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: MyColor.noInternetColor);
+    }
+    print(response);
+  }
 }

@@ -133,7 +133,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                           width: MediaQuery.of(context).size.width/4.3,
                           child: InkWell(
                             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>FavouriteScreen(categoryList[position]['id'].toString())));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>FavouriteScreen(categoryList[position]['id'].toString(),true)));
 
                             },
                             child: Card(
@@ -149,7 +149,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                   FadeInImage.assetNetwork(
                                     height: 50,
                                     placeholder: 'images/app_logo.png',
-                                    image: Constants.imageBaseUrl/*+categoryList[position]['subCategoryImage']*/,
+                                    image: categoryList[position]['subCategoryImage']!=null?Constants.imageBaseUrl+categoryList[position]['subCategoryImage']:'',
                                   ),
                                   SizedBox(
                                     height: 7,

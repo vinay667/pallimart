@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:pallimart/callbacks/button_click_callback.dart';
 import 'package:pallimart/colors/colors.dart';
+import 'package:pallimart/models/user_model.dart';
+import 'package:pallimart/network/api_helper.dart';
+import 'package:pallimart/utils/api_dialog.dart';
+import 'package:pallimart/utils/constants.dart';
 import 'package:pallimart/utils/constants2.dart';
+import 'package:pallimart/utils/login_Dialog.dart';
+import 'package:pallimart/utils/no_internet_check.dart';
 import 'package:pallimart/widgets/appbar_widget.dart';
 import 'package:pallimart/widgets/button_widget.dart';
-class ProductDetail extends StatefulWidget {
+import 'package:toast/toast.dart';
 
-  String id,name,quantity,price,productImage,productDes;
-  ProductDetail(this.id,this.name,this.quantity,this.price,this.productImage,this.productDes);
+class ProductDetail extends StatefulWidget {
+  String productID, name, quantity, price, productImage, productDes, subCatID;
+
+  ProductDetail(this.productID, this.name, this.quantity, this.price,
+      this.productImage, this.productDes, this.subCatID);
+
   @override
-  _ProductDetailState createState() => _ProductDetailState(id,name,quantity,price,productImage,productDes);
+  _ProductDetailState createState() => _ProductDetailState(
+      productID, name, quantity, price, productImage, productDes, subCatID);
 }
 
 class _ProductDetailState extends State<ProductDetail>
     implements ButtonClickListener {
-  String id,name,quantity,price,productImage,productDes;
-  _ProductDetailState(this.id,this.name,this.quantity,this.price,this.productImage,this.productDes);
+  List<dynamic> productList = [];
+  String productID, name, quantity, price, productImage, productDes, subCatId;
+
+  _ProductDetailState(this.productID, this.name, this.quantity, this.price,
+      this.productImage, this.productDes, this.subCatId);
+
   final _controller = PageController();
 
   @override
@@ -49,7 +64,7 @@ class _ProductDetailState extends State<ProductDetail>
                             return Card(
                               color: Colors.white,
                               margin: EdgeInsets.only(
-                                  bottom: 52, left: 16, right: 16),
+                                  bottom: 80, left: 16, right: 16),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(4.0),
                                   child: Image.network(
@@ -60,7 +75,7 @@ class _ProductDetailState extends State<ProductDetail>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                     /* Padding(
+                      /* Padding(
                         padding: EdgeInsets.only(left: 42, bottom: 8),
                         child: SmoothPageIndicator(
                           controller: _controller, // PageController
@@ -128,7 +143,7 @@ class _ProductDetailState extends State<ProductDetail>
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              'Rs. '+price,
+                                              'Rs. ' + price,
                                               style: TextStyle(
                                                   color: MyColor
                                                       .homeItemTitleColor,
@@ -136,7 +151,6 @@ class _ProductDetailState extends State<ProductDetail>
                                                   fontWeight: FontWeight.w600,
                                                   fontFamily: 'Gilroy'),
                                             ),
-
                                             SizedBox(
                                               width: 4,
                                             ),
@@ -181,7 +195,8 @@ class _ProductDetailState extends State<ProductDetail>
               ),
               Container(
                   margin: EdgeInsets.only(left: 16, right: 16),
-                  child: Text(productDes,
+                  child: Text(
+                    productDes,
                     style: TextStyle(
                         color: MyColor.detailText,
                         fontSize: 9.3,
@@ -290,22 +305,304 @@ class _ProductDetailState extends State<ProductDetail>
                   ],
                 ),
               ),
-              TitleText('View Similar'),
+
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: Text(
+                  'Similar items',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontFamily: 'Gilroy',
+                      fontWeight: FontWeight.w500),
+                ),
+              ),
+
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                  height: 200,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: productList.length,
+                      padding: EdgeInsets.only(left: 12, right: 12),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductDetail(
+                                        productList[index]['id'].toString(),
+                                        productList[index]['productName'],
+                                        productList[index]['productQuantity']
+                                                .toString() +
+                                            ' ' +
+                                            productList[index]
+                                                ['productPerimeter'],
+                                        productList[index]['productPrice']
+                                            .toString(),
+                                        Constants.imageBaseUrl +
+                                            productList[index]['productImage'],
+                                        productList[index]
+                                            ['productDescription'],
+                                        productList[index]['subCategoryId']
+                                            .toString())));
+                          },
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * .45,
+                              child: Stack(
+                                alignment: Alignment.bottomCenter,
+                                children: <Widget>[
+                                  Card(
+                                    color: Colors.white,
+                                    margin: EdgeInsets.only(
+                                        bottom: 42, left: 4, right: 4),
+                                    child: Stack(
+                                      alignment: Alignment.topRight,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 12,
+                                              right: 12,
+                                              top: 5,
+                                              bottom: 25),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(4.0),
+                                            child: FadeInImage.assetNetwork(
+                                              height: 140.0,
+                                              fit: BoxFit.fill,
+                                              placeholder:
+                                                  'images/app_logo.png',
+                                              image: Constants.imageBaseUrl +
+                                                  productList[index]
+                                                      ['productImage'],
+                                            ),
+                                          ),
+                                        ),
+                                        Image.asset(
+                                          'images/icon_fav.png',
+                                          height: 36,
+                                          width: 36,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Card(
+                                      color: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      elevation: 5,
+                                      margin: EdgeInsets.only(
+                                          bottom: 12, left: 12, right: 12),
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .45,
+                                        padding: EdgeInsets.only(left: 8),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            SizedBox(
+                                              height: 12,
+                                            ),
+                                            Text(
+                                              productList[index]['productName'],
+                                              style: TextStyle(
+                                                  color: MyColor
+                                                      .homeItemTitleColor,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontFamily: 'Gilroy'),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            SizedBox(
+                                              height: 4,
+                                            ),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Expanded(
+                                                    child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      productList[index][
+                                                                  'productQuantity']
+                                                              .toString() +
+                                                          ' ' +
+                                                          productList[index][
+                                                              'productPerimeter'],
+                                                      style: TextStyle(
+                                                          color: MyColor
+                                                              .homeItemSubTitleColor,
+                                                          fontSize: 9.3,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontFamily: 'Gilroy'),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 4,
+                                                    ),
+                                                    Row(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          'Rs. ' +
+                                                              productList[index]
+                                                                      [
+                                                                      'productPrice']
+                                                                  .toString(),
+                                                          style: TextStyle(
+                                                              color: MyColor
+                                                                  .homeItemTitleColor,
+                                                              fontSize: 10.7,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontFamily:
+                                                                  'Gilroy'),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 4,
+                                                        ),
+                                                        Text(
+                                                          "",
+                                                          style: TextStyle(
+                                                              color: MyColor
+                                                                  .homeItemSubTitleColor,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .lineThrough,
+                                                              fontSize: 7.8,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontFamily:
+                                                                  'Gilroy'),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                )),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    if(UserModel.accessToken=='notLogin')
+                                                    {
+                                                      LoginDialog.showLogInDialog(context,'Please Login to add a Product !!');
+
+
+                                                    }
+                                                    else{
+                                                      addProduct(
+                                                          productList[index]
+                                                          ['id']);
+                                                    }
+
+
+                                                  },
+                                                  child: Image.asset(
+                                                      'images/home_icon_delete.png'),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      )),
+                                ],
+                              )),
+                        );
+                      })),
               SizedBox(
                 height: 8,
               ),
               //HomeListView(),
             ],
           )),
-          MyButton(callback: this, title: "Add to Cart")
+          MyButton(callback: this, title: "Add to Cart"),
         ]));
+  }
+
+  addProduct(String productId) async {
+    var _fromData = {
+      'product_id': productId,
+      'product_qty': 1,
+    };
+    print(_fromData);
+    ApiBaseHelper helper = new ApiBaseHelper();
+    APIDialog.showAlertDialog(context, 'Adding to cart...');
+    var response = await helper.postAPIFormData(
+        'product/api/cart/add', context, _fromData);
+    Navigator.pop(context);
+    if (response['status'] == 'success') {
+      Toast.show('Product added to cart !!', context,
+          duration: Toast.LENGTH_SHORT,
+          gravity: Toast.BOTTOM,
+          backgroundColor: MyColor.themeColor);
+    } else {
+      Toast.show(response['message'], context,
+          duration: Toast.LENGTH_SHORT,
+          gravity: Toast.BOTTOM,
+          backgroundColor: MyColor.noInternetColor);
+    }
+    print(response);
+  }
+
+  fetchProducts() async {
+    var _fromData = {
+      'subCategoryId': subCatId,
+    };
+    print(_fromData);
+    ApiBaseHelper helper = new ApiBaseHelper();
+    APIDialog.showAlertDialog(context, 'Please wait...');
+    var response = await helper.postAPIFormData(
+        'product/api/subCategoryProducts', context, _fromData);
+    Navigator.pop(context);
+    setState(() {
+      productList = response['data'];
+    });
+    print(response);
+  }
+
+  void checkInternetAPIcall() async {
+    if (await InternetCheck.check() == true) {
+      fetchProducts();
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkInternetAPIcall();
   }
 
   @override
   void onButtonClickListener(int id) {
     if (id == Constants2.SEARCH_CLICK_ID)
       Navigator.pushNamed(context, '/search');
-    else if (id == Constants2.BUTTON_CLICK_ID) {}
+    else if (id == Constants2.BUTTON_CLICK_ID) {
+      if(UserModel.accessToken=='notLogin')
+      {
+        LoginDialog.showLogInDialog(context,'Please Login to add a Product !!');
+
+
+      }
+      else{
+        addProduct(productID);
+      }
+
+    }
   }
 }
 

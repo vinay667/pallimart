@@ -11,7 +11,7 @@ import 'package:toast/toast.dart';
 class ApiBaseHelper {
   final String _baseUrl = Constants.appBaseUrl;
 
-  Future<dynamic> get(String url, BuildContext context) async {
+    get(String url, BuildContext context) async {
     var responseJson;
     print(_baseUrl+url);
     //String accessToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZTIyM2VmNTcyZWEyYThiMDIzYzI4YTkxNDFmZWYwNjNiMmUxNzNjMjkxMGZiMWZmZjc3OTA4MTMzMDIyYmI5MjNiNTQ3OTA1Mzc0MmZjMmUiLCJpYXQiOjE1OTQ5MDM2NTcsIm5iZiI6MTU5NDkwMzY1NywiZXhwIjoxNjI2NDM5NjU3LCJzdWIiOiI0Iiwic2NvcGVzIjpbXX0.ENADEr1LITY5hjQjlqpA09iQSwL-3OMFLL0Q0EeOvtYWtGsKIxj4JncDztKbC4XFn6TZSXzCeCsl3Bgbp5_-reVsQfWwcNkG7r0nvMADngMMV6uTnjn9OSg_75gc59AlmwgHCNtYW0qZRgoKBxn0i4MGeESV1dV7nwruluhVz7qO9rmA9qZZtIJIjecWKWJTa09jxjsKlXNISr7ft9E6f6rfes6-0knPkKpoveSHXqjtGOpnupM9ZDyIDcJjWnI4YHoomW2PjSbiWqOHJJVV4DInDASSbah_swj6XPHczEEz-1iHlGIdOUrkooKu1KtgC8DmKwenoADdY0S4puAdllof-hxpBHEKfX00jBN7JZYvjJyXbZP5zoZ3ACcuNfgP28HrfMdOQMC1EnhXV-wzsZxSn991DE7fzBZ1jKztP4HTFcXfUioecSnxZkxIDu4sbY3gQDi1up_rM2Pwoh_uhJ-0Cm0tjifdvGT9KU0rJIdsFV0tqMAxhcZtTGwHVc4SWBRUWMYeCl-DyeDABA0Y5WWMpeDx2XSBbwP5lNrmtl1Yg56siSwSxlr5V_eNp8WFvYxyt6yNdJ76WRERBWrflBIq6ReiNj8AQiRKdna1vyN0yuD8Rr3G686Dyl5Frj5qDfW70gbppprJ_KeiDgFeLqlyztZRP78gCJhJMO-6n6M';
@@ -27,10 +27,12 @@ class ApiBaseHelper {
     return responseJson;
   }
 
-  Future<dynamic> getWithToken(String url, BuildContext context) async {
+  getWithToken(String url, BuildContext context) async {
     var responseJson;
     print(_baseUrl+url);
     String accessToken=UserModel.accessToken;
+    print(accessToken);
+
     try {
       final response = await http.get(_baseUrl + url, headers: {
         'Content-Type': 'application/json',
@@ -54,8 +56,7 @@ class ApiBaseHelper {
   }
 
 
-
-  Future<dynamic> postAPI(
+ postAPI(
       String url, BuildContext context) async {
     var responseJson;
     String accessToken=UserModel.accessToken;
@@ -69,7 +70,7 @@ class ApiBaseHelper {
     }
     return responseJson;
   }
-  Future<dynamic> postAPIFormData(
+   postAPIFormData(
       String url, BuildContext context, var apiParams) async {
     var responseJson;
     String accessToken=UserModel.accessToken;
@@ -81,6 +82,7 @@ class ApiBaseHelper {
           headers: {
           "Content-type": "application/json","access-token":accessToken});
       print(response.toString()+'ffgrg');
+      print(response.statusCode);
       responseJson = _returnResponse(response, context);
     } on SocketException {
       throw FetchDataException('No Internet connection');

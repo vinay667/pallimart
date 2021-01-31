@@ -8,9 +8,9 @@ class MyTextInputField extends StatelessWidget {
   String inputType;
   final FocusNode currentFocus;
   final FocusNode nextFocus;
-
+  var controller;
   MyTextInputField(this.callback, this.label, this.inputType, this.currentFocus,
-      this.nextFocus);
+      this.nextFocus,this.controller);
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +37,7 @@ class MyTextInputField extends StatelessWidget {
                         fit: BoxFit.fill)),
                 child: TextFormField(
                     expands: false,
+                    controller: controller,
                     focusNode: currentFocus,
                     decoration: InputDecoration(
                       isDense: true,

@@ -6,8 +6,8 @@ class Constants{
   static const String SLIDER_HEADING_1 = "Easy Exchange!";
   static const String SLIDER_HEADING_2 = "Easy to Use!";
   static const String SLIDER_HEADING_3 = "Connect with Others";
-  static const String appBaseUrl = "http://www.pallimart.com/";
-  static const String imageBaseUrl = "http://pallimart.com/product/";
+  static const String appBaseUrl = "https://pallimart.com/";
+  static const String imageBaseUrl = "https://pallimart.com/product/";
   static const String SLIDER_DESC = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ultricies, erat vitae porta consequat.";
 
 }
