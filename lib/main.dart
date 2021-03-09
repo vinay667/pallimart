@@ -15,7 +15,13 @@ void main() async{
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String token=await prefs.getString('access_token') ?? 'notLogin';
   String pageValue=await prefs.getString('page_value');
-  UserModel.setAccessToken(token);
+  if(token!='notLogin')
+    {
+      String count=await prefs.getString('count');
+      UserModel.setAccessToken(token);
+      UserModel.setCartCount(count);
+    }
+
   print(token);
   //print(await prefs.getString('name'));
   runApp(MyApp(token,pageValue));

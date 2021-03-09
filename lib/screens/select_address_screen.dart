@@ -9,6 +9,8 @@ import 'package:pallimart/widgets/address_widget.dart';
 import 'package:pallimart/screens/payment_screen.dart';
 import 'package:toast/toast.dart';
 class SelectAddressScreen extends StatefulWidget {
+  int price;
+  SelectAddressScreen(this.price);
   SelectAddressState createState() => SelectAddressState();
 }
 
@@ -83,7 +85,7 @@ class SelectAddressState extends State<SelectAddressScreen> {
              else
 
 
-      Navigator.push(context, CupertinoPageRoute(builder: (context)=>PaymentScreen()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context)=>PaymentScreen(widget.price)));
 
 
 
@@ -126,6 +128,7 @@ class SelectAddressState extends State<SelectAddressScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print(widget.price);
     checkInternetAPIcall();
   }
   fetchUserAddress() async {

@@ -1,14 +1,19 @@
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pallimart/callbacks/button_click_callback.dart';
 import 'package:pallimart/callbacks/text_field_callback.dart';
 import 'package:pallimart/colors/colors.dart';
+import 'package:pallimart/network/api_helper.dart';
+import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/utils/constants2.dart';
 import 'package:pallimart/widgets/appbar_title.dart';
 import 'package:pallimart/widgets/button_widget.dart';
 import 'package:pallimart/widgets/text_input_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -20,8 +25,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   String _password;
   String _email, _phoneNumber, _userName;
   final FocusNode emailFocus = FocusNode();
+  File _image;
+  final picker = ImagePicker();
   var textControllerName = new TextEditingController();
   var textControllerEmail = new TextEditingController();
+  var textControllerLastName = new TextEditingController();
   final FocusNode userNameFocus = FocusNode();
   final FocusNode phoneNumberFocus = FocusNode();
   final FocusNode passwordFocus = FocusNode();
@@ -123,10 +131,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                   Column(
                     children: <Widget>[
-                      MyTextInputField(this, 'Name:','user_name',
+                      MyTextInputField(this, 'First Name:','first name',
                           userNameFocus, phoneNumberFocus,textControllerName),
-                      MyTextInputField(this, 'Phone No:', 'phone',
-                          phoneNumberFocus, emailFocus,null),
+                      MyTextInputField(this, 'Last Name:', 'last name',
+                          phoneNumberFocus, emailFocus,textControllerLastName),
                       MyTextInputField(this, 'Email Id:', 'email', emailFocus,
                           passwordFocus,textControllerEmail),
                       MyTextInputField(
@@ -174,9 +182,48 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   void onButtonClickListener(int id) {
     if (id == Constants2.BUTTON_CLICK_ID) {
-      if (_key.currentState.validate()) {
+      updateUserProfile();
+  /*    if (_key.currentState.validate()) {
         _key.currentState.save();
-      }
+      }*/
     }
   }
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+  }
+  updateUserProfile() async {
+    var _fromData = {
+      'firstName': textControllerName.text,
+      'lastName':textControllerLastName.text,
+      'emailAddress':textControllerEmail.text
+    };
+    ApiBaseHelper helper=new ApiBaseHelper();
+    APIDialog.showAlertDialog(context, 'Updating profile...');
+    try{
+      var response=await helper.postAPIFormData('product/api/customer/update', context,_fromData);
+      Navigator.pop(context);
+
+      if(response['status'])
+        {
+          Toast.show('Profile Updated Successfully !!', context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM,backgroundColor: Colors.black);
+          Navigator.pop(context);
+          print(response.toString());
+        }
+
+
+
+    }
+    catch (errorMessage) {
+      String message = errorMessage.toString();
+      print(message);
+      Navigator.pop(context);
+    }
+
+  }
+
+
 }

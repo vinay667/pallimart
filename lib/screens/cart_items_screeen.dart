@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pallimart/callbacks/button_click_callback.dart';
 import 'package:pallimart/colors/colors.dart';
+import 'package:pallimart/models/user_model.dart';
 import 'package:pallimart/network/api_helper.dart';
 import 'package:pallimart/screens/all_address_screen.dart';
 import 'package:pallimart/screens/select_address_screen.dart';
@@ -33,7 +34,8 @@ class CartItemsState extends State<CartItemsScreen>
       appBar: AppbarWidget(
         context: context,
        // clickListener: this,
-        counter: 0,
+        counter: UserModel.accessToken=='notLogin'?'0':UserModel.cartCount,
+
         isBack: true,
         type: "shopping",
         title: "Shopping Cart",
@@ -190,7 +192,7 @@ class CartItemsState extends State<CartItemsScreen>
                                                         10),
                                                   ),
                                                   child: Text(
-                                                    cartItems[position]['product']['productQuantity'].toString()+' '+cartItems[position]['product']['productPerimeter'],
+                                                    cartItems[position]['productTotalQty'].toString()+' '+cartItems[position]['product']['productPerimeter'],
                                                     style: TextStyle(
                                                         fontSize: 9.3,
                                                         fontFamily: 'Gilroy',
@@ -235,14 +237,17 @@ class CartItemsState extends State<CartItemsScreen>
                                                         color:
                                                         MyColor.themeColor,
                                                         child: Center(
-                                                            child: Text('1',style: TextStyle(
+                                                            child: Text( cartItems[position]['productTotalQty'].toString(),style: TextStyle(
                                                               fontSize: 15,color: Colors.white,fontFamily: 'Gilroy',fontWeight: FontWeight.bold
                                                             ),)
                                                         )),
                                                     GestureDetector(
                                                       onTap: () {
 
-
+                                                        addProduct(
+                                                            cartItems[
+                                                            position]
+                                                            ['product_id']);
 
                                                       },
                                                       child: Container(
@@ -262,33 +267,7 @@ class CartItemsState extends State<CartItemsScreen>
                                           SizedBox(
                                             height: 12,
                                           ),
-                                        Container(
-                                          padding: EdgeInsets.all(10),
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  'Moved to Wishlist',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 10.5,
-                                                      decoration:
-                                                          TextDecoration.none,
-                                                      fontFamily: 'Gilroy',
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.3),
-                                                  gradient: LinearGradient(
-                                                    colors: <Color>[
-                                                      MyColor.gradientStart,
-                                                      MyColor.gradientEnd
-                                                    ],
-                                                  ),
-                                                  color: Colors.white,
-                                                ),
-                                              ),
+
                                         ],
                                       ))
                                     ],
@@ -413,130 +392,7 @@ class CartItemsState extends State<CartItemsScreen>
                     SizedBox(
                       height: 5,
                     ),
-                   /* Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 15),
-                          child: Text(
-                            'Cart Discount',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Gilroy',
-                              color: MyColor.homeItemTitleColor,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 15),
-                          child: Text(
-                            '\$40',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'Gilroy',
-                                fontWeight: FontWeight.w300,
-                                color: MyColor.colorGreen),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 15),
-                          child: Text(
-                            'Coupon Discount',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Gilroy',
-                              color: MyColor.homeItemTitleColor,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 15),
-                          child: Text(
-                            'Apply Coupon',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Gilroy',
-                              color: MyColor.colorCoupon,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 15),
-                          child: Text(
-                            'Order Total',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Gilroy',
-                              color: MyColor.homeItemTitleColor,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 15),
-                          child: Text(
-                            '\$2960',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Gilroy',
-                              color: MyColor.homeItemTitleColor,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 15),
-                          child: Text(
-                            'Delivery Charges',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Gilroy',
-                              color: MyColor.homeItemTitleColor,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 15),
-                          child: Text(
-                            '\$2',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Gilroy',
-                              color: MyColor.homeItemTitleColor,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),*/
+
                     Padding(
                         padding: EdgeInsets.only(top: 15, left: 15, right: 15),
                         child: Divider(
@@ -616,6 +472,34 @@ class CartItemsState extends State<CartItemsScreen>
             ],
           )),
     );
+  }
+
+  addProduct(int productId) async {
+    var _fromData = {
+      'product_id': productId.toString(),
+      'product_qty': 1,
+    };
+
+    print(_fromData);
+    ApiBaseHelper helper = new ApiBaseHelper();
+    APIDialog.showAlertDialog(context, 'Adding to cart...');
+    var response = await helper.postAPIFormData(
+        'product/api/cart/add', context, _fromData);
+    Navigator.pop(context);
+    if (response['status'] == 'success') {
+      Toast.show('Product added to cart !!', context,
+          duration: Toast.LENGTH_SHORT,
+          gravity: Toast.BOTTOM,
+          backgroundColor: MyColor.themeColor);
+
+      fetchCartData();
+    } else {
+      Toast.show(response['message'], context,
+          duration: Toast.LENGTH_SHORT,
+          gravity: Toast.BOTTOM,
+          backgroundColor: MyColor.noInternetColor);
+    }
+    print(response);
   }
    fetchCartData() async {
     ApiBaseHelper helper=new ApiBaseHelper();
@@ -710,7 +594,7 @@ removeProduct(productId);
   @override
   void onButtonClickListener(int id) {
 
-    Navigator.push(context, CupertinoPageRoute(builder: (context) =>SelectAddressScreen()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>SelectAddressScreen(int.parse(cartTotal))));
 
 
 

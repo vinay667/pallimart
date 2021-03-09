@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:pallimart/colors/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:pallimart/models/user_model.dart';
+import 'package:pallimart/screens/forgot_password_screen.dart';
 import 'package:pallimart/screens/sign_up_screen.dart';
 import 'package:pallimart/screens/login_demo.dart';
 import 'package:pallimart/screens/social_sign_up_screen.dart';
@@ -28,6 +29,8 @@ class LoginScreenState extends State<LoginScreen>
   GlobalKey<ScaffoldState> key = new GlobalKey<ScaffoldState>();
   var textControllerName = new TextEditingController();
   var textControllerPassword = new TextEditingController();
+  bool showPassword=true;
+  String passwordURI='images/pwd_hide.png';
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,7 @@ class LoginScreenState extends State<LoginScreen>
           child: Card(
             elevation: 10,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20))
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30),bottomRight: Radius.circular(30))
 
             ),
             margin: EdgeInsets.zero,
@@ -115,27 +118,64 @@ class LoginScreenState extends State<LoginScreen>
                   SizedBox(height: 20),
                   Padding(
                     padding: EdgeInsets.only(left: 15, right: 15),
-                    child: Container(
-                      child: TextFormField(
-                        obscureText: true,
-                        keyboardType: TextInputType.text,
-                        style: TextStyle(
-                            color: Colors.black.withOpacity(0.7),
-                            fontSize: 15,
-                            fontFamily: 'GilroySemibold'),
-                        controller: textControllerPassword,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Enter password',
-                          hintStyle: TextStyle(
-                            color: MyColor.lightGreyTextColor,
-                            fontSize: 15,
-                            decoration: TextDecoration.none,
+                    child: Stack(
+                      children: <Widget>[
+
+                        Container(
+                          child: TextFormField(
+                            obscureText: showPassword,
+                            keyboardType: TextInputType.text,
+                            style: TextStyle(
+                                color: Colors.black.withOpacity(0.7),
+                                fontSize: 15,
+                                fontFamily: 'GilroySemibold'),
+                            controller: textControllerPassword,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Enter password',
+                              hintStyle: TextStyle(
+                                color: MyColor.lightGreyTextColor,
+                                fontSize: 15,
+                                decoration: TextDecoration.none,
+                              ),
+                            ),
                           ),
+                          height: 40,
                         ),
-                      ),
-                      height: 40,
-                    ),
+
+                        Row(
+                          children: <Widget>[
+
+                            Spacer(),
+                            Container(
+                              margin: EdgeInsets.only(top: 20,right: 10),
+                              child: InkWell(
+                                onTap: (){
+                                  if(showPassword)
+                                    {
+                                      setState(() {
+                                        showPassword=false;
+                                        passwordURI='images/pwd_show.png';
+                                      });
+                                    }
+                                  else{
+
+                                    setState(() {
+                                      showPassword=true;
+                                      passwordURI='images/pwd_hide.png';
+                                    });
+
+                                  }
+                                },
+                                child: Image.asset(passwordURI,width: 20,height: 20),
+                              )
+                            )
+                          ],
+                        )
+
+
+                      ],
+                    )
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 15,right: 15),
@@ -147,15 +187,23 @@ class LoginScreenState extends State<LoginScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 15),
-                        child: TextWidget('Forgot password?',MyColor.greyTextColor,16),
+
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ForgotPasswordScreen()));
+                        },
+                        child:   Padding(
+                          padding: EdgeInsets.only(left: 15),
+                          child: TextWidget('Forgot password?',MyColor.greyTextColor,16),
+                        ),
                       ),
 
                       GestureDetector(
                         onTap: (){
+                          FocusScope.of(context).unfocus();
                           if (textControllerName.text == '' ||
                               textControllerPassword.text == '') {
+
                             MySnackbar.displaySnackbar(key, MyColor.infoSnackColor,
                                 'Please fill all the fields !!');
                           }
@@ -174,11 +222,11 @@ class LoginScreenState extends State<LoginScreen>
                               MySnackbar.displaySnackbar(key, MyColor.noInternetColor,
                                   'Please Enter a valid Email !!');
                             }
-                          else if(textControllerName.text=='abc@gmail.com' && textControllerPassword.text=='123456')
+                    /*      else if(textControllerName.text=='abc@gmail.com' && textControllerPassword.text=='123456')
                             {
                             //  Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
                               Navigator.pushReplacementNamed(context, '/home');
-                            }
+                            }*/
                           else
                             {
                              checkInternetAPIcall();
@@ -244,7 +292,8 @@ class LoginScreenState extends State<LoginScreen>
       ),
     );
   }
-    Future<Map<String, dynamic>> loginUser() async {
+loginUser() async {
+
       String message = '';
       final Map<String, dynamic> collectedAuthData = {
         'emailAddress': textControllerName.text,
@@ -267,13 +316,14 @@ class LoginScreenState extends State<LoginScreen>
         Navigator.pop(context);
         if(fetchResponse['success'].toString()=='true')
           {
-         _saveUserDetail(fetchResponse['data']['firstName']+' '+fetchResponse['data']['lastName'], fetchResponse['data']['emailAddress'], fetchResponse['data']['access_token']);
-         Toast.show(fetchResponse['message'], context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: Colors.lightBlue,);
+         _saveUserDetail(fetchResponse['data']['firstName']+' '+fetchResponse['data']['lastName'], fetchResponse['data']['emailAddress'], fetchResponse['data']['access_token'],fetchResponse['cart_count'].toString());
+         Toast.show(fetchResponse['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM,backgroundColor: Colors.black,);
          Navigator.pushReplacementNamed(context, '/bottom');
           }
         else if(fetchResponse['success'].toString()=='false')
           {
-            MySnackbar.displaySnackbar(key,MyColor.noInternetColor,fetchResponse['message']);
+            Toast.show(fetchResponse['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM,backgroundColor: Colors.black,);
+            //MySnackbar.displaySnackbar(key,MyColor.noInternetColor,fetchResponse['message']);
           }
 
       } catch (errorMessage) {
@@ -283,13 +333,16 @@ class LoginScreenState extends State<LoginScreen>
       }
     }
 
-    _saveUserDetail(String name,String email,String access_token)
+    _saveUserDetail(String name,String email,String access_token,String count)
     async {
+       print(count);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('name', name);
       prefs.setString('email', email);
       prefs.setString('access_token', access_token);
+      prefs.setString('count', count);
       UserModel.setAccessToken(access_token);
+      UserModel.setCartCount(count);
 
     }
 

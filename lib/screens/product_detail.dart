@@ -3,6 +3,7 @@ import 'package:pallimart/callbacks/button_click_callback.dart';
 import 'package:pallimart/colors/colors.dart';
 import 'package:pallimart/models/user_model.dart';
 import 'package:pallimart/network/api_helper.dart';
+import 'package:pallimart/screens/cart_items_screeen.dart';
 import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/utils/constants.dart';
 import 'package:pallimart/utils/constants2.dart';
@@ -39,7 +40,8 @@ class _ProductDetailState extends State<ProductDetail>
         appBar: AppbarWidget(
           context: context,
           clickListener: this,
-          counter: 3,
+          counter: UserModel.accessToken=='notLogin'?'0':UserModel.cartCount,
+
           isBack: true,
           type: "home",
         ),
@@ -133,7 +135,7 @@ class _ProductDetailState extends State<ProductDetail>
                                           style: TextStyle(
                                               color:
                                                   MyColor.homeItemSubTitleColor,
-                                              fontSize: 9.3,
+                                              fontSize: 12,
                                               fontWeight: FontWeight.w500,
                                               fontFamily: 'Gilroy'),
                                         ),
@@ -167,16 +169,24 @@ class _ProductDetailState extends State<ProductDetail>
                                         )
                                       ],
                                     )),
-                                    Stack(
-                                      alignment: Alignment.center,
-                                      children: <Widget>[
-                                        Image.asset('images/ellipse_like.png'),
-                                        Image.asset(
-                                          'images/icon_fav.png',
-                                          color: MyColor.whiteColor,
-                                        )
-                                      ],
+
+                                    GestureDetector(
+                                      onTap: (){
+                                        addtoFavourite();
+                                      },
+                                      child:  Stack(
+                                        alignment: Alignment.center,
+                                        children: <Widget>[
+                                          Image.asset('images/ellipse_like.png'),
+                                          Image.asset(
+                                            'images/icon_fav.png',
+                                            color: MyColor.whiteColor,
+                                          )
+                                        ],
+                                      ),
                                     )
+
+
                                   ],
                                 )
                               ],
@@ -218,10 +228,8 @@ class _ProductDetailState extends State<ProductDetail>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Row(
+
+                   /* Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
@@ -267,7 +275,7 @@ class _ProductDetailState extends State<ProductDetail>
                                 fontWeight: FontWeight.w600),
                             textInputAction: TextInputAction.search,
                             maxLines: 1,
-                            onSubmitted: (term) {})),
+                            onSubmitted: (term) {})),*/
                   ],
                 ),
               ),
@@ -573,7 +581,28 @@ class _ProductDetailState extends State<ProductDetail>
     });
     print(response);
   }
+  addtoFavourite() async {
+    var _fromData = {
+      'productId': productID,
+    };
+    print(_fromData);
+    ApiBaseHelper helper = new ApiBaseHelper();
+    APIDialog.showAlertDialog(context, 'Please wait...');
+    var response = await helper.postAPIFormData(
+        'product/api/add/favourite/product', context, _fromData);
+    Navigator.pop(context);
+    if(response['status'].toString()=='success')
+    {
+      Toast.show('Add to favourite list successfully !!', context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM,backgroundColor: Colors.black);
+     // Navigator.pop(context);
+      print(response.toString());
+    }
 
+
+
+
+    print(response);
+  }
   void checkInternetAPIcall() async {
     if (await InternetCheck.check() == true) {
       fetchProducts();
@@ -598,8 +627,29 @@ class _ProductDetailState extends State<ProductDetail>
 
 
       }
+
+
+
       else{
         addProduct(productID);
+      }
+
+    }
+
+
+    else if (id == Constants2.CART_ID) {
+      if(UserModel.accessToken=='notLogin')
+      {
+        LoginDialog.showLogInDialog(context,'Please Login to view Cart !!');
+
+
+      }
+
+
+
+      else{
+
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>CartItemsScreen()));
       }
 
     }

@@ -8,7 +8,7 @@ class AppbarWidget extends AppBar {
   AppbarWidget(
       {BuildContext context,
       ButtonClickListener clickListener,
-      int counter,
+      String counter,
       bool isBack,
        Function onTap,
       bool isShowAction=true,
@@ -71,7 +71,7 @@ class AppbarWidget extends AppBar {
                           ),
                           onTap: () => clickListener
                               .onButtonClickListener(Constants2.CART_ID)),
-                      counter != 0
+                      counter != null
                           ? Positioned(
                               right: 8,
                               top: 8,

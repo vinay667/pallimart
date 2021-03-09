@@ -233,67 +233,14 @@ class MyOrdersState extends State<MyOrdersScreen> {
                                           )
                                         ],
                                       ),
+
                                       SizedBox(
-                                        height: 10,
+                                        height: 5,
                                       ),
-                                      Container(
-                                        height: 1,
-                                        color: MyColor.greyDivider22,
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 10),
-                                            child: Text(
-                                              'Share Rating:',
-                                              style: TextStyle(
-                                                  color: MyColor.greyDark,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontFamily: 'Gilroy',
-                                                  letterSpacing: -0.24),
-                                            ),
-                                          ),
-                                          SizedBox(width: 12),
-                                          Image.asset(
-                                            'images/rating_empty.png',
-                                            width: 16,
-                                            height: 16,
-                                          ),
-                                          SizedBox(width: 3),
-                                          Image.asset(
-                                            'images/rating_empty.png',
-                                            width: 16,
-                                            height: 16,
-                                          ),
-                                          SizedBox(width: 3),
-                                          Image.asset(
-                                            'images/rating_empty.png',
-                                            width: 16,
-                                            height: 16,
-                                          ),
-                                          SizedBox(width: 3),
-                                          Image.asset(
-                                            'images/rating_empty.png',
-                                            width: 16,
-                                            height: 16,
-                                          ),
-                                          SizedBox(width: 3),
-                                          Image.asset(
-                                            'images/rating_empty.png',
-                                            width: 16,
-                                            height: 16,
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 15),
+
                                     ],
                                   )),
                             )),
-                        SizedBox(height: 25),
                       ],
                     ),
                   ),
@@ -329,10 +276,7 @@ class MyOrdersState extends State<MyOrdersScreen> {
     if(orderList.length==0)
       {
         Toast.show('No orders found !!!', context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: MyColor.noInternetColor);
-
       }
-
-
     print(response);
   }
 

@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:pallimart/colors/colors.dart';
 import 'package:pallimart/network/api_helper.dart';
 import 'package:pallimart/utils/api_dialog.dart';
+import 'package:pallimart/utils/validations.dart';
 import 'package:pallimart/widgets/custom_container_widget.dart';
 import 'package:pallimart/widgets/input_field_border.dart';
+import 'package:pallimart/widgets/phone_input_widget.dart';
 import 'package:toast/toast.dart';
 
 class AddAddressScreen extends StatefulWidget {
@@ -97,7 +99,7 @@ class AddAddressState extends State<AddAddressScreen>{
 
           Container(
             padding: EdgeInsets.only(left: 30, right: 30),
-            child: CustomContainer(
+            child: PhoneWidget(
               labelText: 'Phone Number',
               focusNode: roadFocusNode,
               controller: textControllerColony,
@@ -228,7 +230,18 @@ class AddAddressState extends State<AddAddressScreen>{
                     duration: Toast.LENGTH_LONG,
                     gravity: Toast.BOTTOM,
                     backgroundColor: Colors.black);
-              } else if(textControllerAddress.text=='')
+              }
+              else if(Validations.checkEmail(textControllerEmail.text)==false)
+              {
+                Toast.show('Enter a valid email !!', context,
+                    duration: Toast.LENGTH_LONG,
+                    gravity: Toast.BOTTOM,
+                    backgroundColor: Colors.black);
+
+              }
+
+
+              else if(textControllerAddress.text=='')
               {
                 Toast.show('Address cannot be empty !!', context,
                     duration: Toast.LENGTH_LONG,
@@ -241,20 +254,6 @@ class AddAddressState extends State<AddAddressScreen>{
                     gravity: Toast.BOTTOM,
                     backgroundColor: Colors.black);
               }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
               else if(textControllerState.text=='')
               {
                 Toast.show('State cannot be empty !!', context,

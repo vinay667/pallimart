@@ -42,7 +42,7 @@ class AllAddressState extends State<AllAddressScreen> {
             width: double.infinity,
             padding: EdgeInsets.only(left: 15),
             child: Text(
-              'All Addresses',
+              addressList.length!=0?"All Addresses":'',
               style: TextStyle(
                   fontFamily: 'Geomanist',
                   fontSize: 16,
@@ -52,6 +52,21 @@ class AllAddressState extends State<AllAddressScreen> {
 
 
 
+
+          addressList.length==0?
+
+          Expanded(
+            child: Center(
+              child:  Text(
+                "No Address found !!",
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontFamily: 'Gilroy',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600),
+              ) // button text,
+            ),
+          ):
 
           Expanded(
             child: ListView.builder(
@@ -63,6 +78,8 @@ class AllAddressState extends State<AllAddressScreen> {
 
                       removeAddress(addressList[position]['id']);
 
+                    },(){
+                      Navigator.push(context, CupertinoPageRoute(builder: (context)=>AddAddressScreen()));
                     }),
                   );
                 }),

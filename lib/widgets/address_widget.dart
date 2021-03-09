@@ -127,7 +127,8 @@ class AddressWidget extends StatelessWidget {
 class AddressWidget2 extends StatelessWidget {
   String name,phone,email,address;
   Function deletAddress;
-  AddressWidget2(this.name,this.phone,this.email,this.address,this.deletAddress);
+  Function editAddress;
+  AddressWidget2(this.name,this.phone,this.email,this.address,this.deletAddress,this.editAddress);
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -242,39 +243,44 @@ class AddressWidget2 extends StatelessWidget {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(right: 5, left: 15),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.3)),
-                      child: Container(
-                        width: 133.3,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 0, left: 0),
-                          child: Center(
-                            child: Text(
-                              'Edit',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  decoration: TextDecoration.none,
-                                  fontFamily: 'Gilroy',
-                                  letterSpacing: 0.2,
-                                  fontWeight: FontWeight.w600),
+                    child: InkWell(
+                      onTap: (){
+                        editAddress();
+                      },
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.3)),
+                        child: Container(
+                          width: 133.3,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 0, left: 0),
+                            child: Center(
+                              child: Text(
+                                'Edit',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    decoration: TextDecoration.none,
+                                    fontFamily: 'Gilroy',
+                                    letterSpacing: 0.2,
+                                    fontWeight: FontWeight.w600),
+                              ),
                             ),
                           ),
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.3),
-                          gradient: LinearGradient(
-                            colors: <Color>[
-                              MyColor.gradientStart,
-                              MyColor.gradientEnd
-                            ],
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.3),
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                MyColor.gradientStart,
+                                MyColor.gradientEnd
+                              ],
+                            ),
+                            color: Colors.white,
                           ),
-                          color: Colors.white,
+                          height: 32,
                         ),
-                        height: 32,
                       ),
-                    ),
+                    )
                   ),
 
 

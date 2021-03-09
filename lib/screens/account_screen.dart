@@ -171,13 +171,13 @@ class _AccountScreenState extends State<AccountScreen>
                           title: 'Saved Cards',
                           subTitle: 'Save your cards for faster checkout',
                         ),
-                        Divider(),
-                        AccountItem(
+                       // Divider(),
+                      /*  AccountItem(
 
                           image: 'images/icon_coupon.png',
                           title: 'Coupons',
                           subTitle: 'Manage coupons for additional Discount',
-                        ),
+                        ),*/
                       ],
                     )),
               ),

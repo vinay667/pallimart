@@ -9,13 +9,17 @@ import 'package:pallimart/network/api_helper.dart';
 import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/widgets/custom_text_payment.dart';
 import 'package:pallimart/screens/order_placed_screen.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:toast/toast.dart';
 
 class PaymentScreen extends StatefulWidget {
+  int price;
+  PaymentScreen(this.price);
   PaymentState createState() => PaymentState();
 }
 
 class PaymentState extends State<PaymentScreen> {
+  Razorpay _razorpay;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,21 +173,9 @@ class PaymentState extends State<PaymentScreen> {
                               ),
                             );
                           })),
+
                   Padding(
-                    padding: EdgeInsets.only(left: 15, right: 15, top: 20),
-                    child: Text(
-                      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry \'s standard dummytext ever since the 1500s.',
-                      style: (TextStyle(
-                          color: MyColor.dummyPaymentTextColor,
-                          fontFamily: 'Gilroy',
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.18,
-                          decoration: TextDecoration.none,
-                          fontSize: 13)),
-                    ),
-                  ),
-                  Padding(
-                      padding: EdgeInsets.only(left: 15, top: 35),
+                      padding: EdgeInsets.only(left: 15, top: 15),
                       child: CustomTextPayment('Promo Code')),
 
                   Container(
@@ -214,7 +206,7 @@ class PaymentState extends State<PaymentScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 10),
 
                   Container(
                     margin: EdgeInsets.only(left: 15,right: 200),
@@ -262,17 +254,13 @@ class PaymentState extends State<PaymentScreen> {
                   GestureDetector(
                       onTap: (){
 
-
-
-                       placeOrder();
-                        //postData();
-                        //Navigator.push(context, CupertinoPageRoute(builder: (context)=>PaymentScreen()));
+                 openCheckout();
 
 
 
                       },
                       child: Card(
-                        elevation: 30,
+                        elevation: 10,
                         margin: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
@@ -283,7 +271,7 @@ class PaymentState extends State<PaymentScreen> {
                             height: 50,
                             alignment: Alignment.center,
                             padding: EdgeInsets.all(12),
-                            margin: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+                            margin: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 25),
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
                               image: DecorationImage(
@@ -300,7 +288,8 @@ class PaymentState extends State<PaymentScreen> {
                         ),
                       )
 
-                  )
+                  ),
+
                 ],
               ),
             )
@@ -309,7 +298,58 @@ class PaymentState extends State<PaymentScreen> {
       ),
     );
   }
+  @override
+  void initState() {
+    super.initState();
+    print(widget.price);
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
+
+  void openCheckout() async {
+    String price=widget.price.toString()+'00';
+    var options = {
+      'key': 'rzp_test_GSUScr0ZiWctzM',
+      'amount': price,
+      'name': 'Vinay',
+      'description': 'Payment',
+      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint(e);
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    Toast.show("SUCCESS: " + response.paymentId, context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM,backgroundColor: Colors.green,);
+    placeOrder();
+
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Toast.show("ERROR: " + response.code.toString() + " - " + response.message, context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM,backgroundColor: Colors.red,);
+
+
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Toast.show("EXTERNAL_WALLET: " + response.walletName, context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: Colors.red,);
+
+  }
   placeOrder() async {
     var _fromData = {
       'paymentType': 'cashOnDelivery',
