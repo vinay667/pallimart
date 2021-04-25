@@ -317,7 +317,7 @@ class PaymentState extends State<PaymentScreen> {
   void openCheckout() async {
     String price=widget.price.toString()+'00';
     var options = {
-      'key': 'rzp_test_GSUScr0ZiWctzM',
+      'key': 'rzp_test_at76KNyCpjHuk1',
       'amount': price,
       'name': 'Vinay',
       'description': 'Payment',

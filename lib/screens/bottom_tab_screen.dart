@@ -15,6 +15,7 @@ import 'account_screen.dart';
 import 'category_screen.dart';
 import 'fav_items_screen.dart';
 import 'favourite_sceen.dart';
+import 'favourite_sceen_new.dart';
 import 'home.dart';
 import 'login_screen.dart';
 import 'more_screen.dart';
@@ -31,13 +32,13 @@ class BottomTabScreen extends StatefulWidget {
 
 class BottomTabState extends State<BottomTabScreen>
     implements ButtonClickListener {
-  String selectedLang='English';
+  String selectedLang = 'English';
   GlobalKey<ScaffoldState> _key = GlobalKey();
-  int selectLANG=0;
+  int selectLANG = 0;
   String userName = '', userEmail = '';
   final List<Widget> _children = [
     HomeScreen(),
-    FavouriteScreen('NA', false),
+    FavouriteScreenNew('NA', false),
     AccountScreen(),
     MoreScreen(),
     CategoryScreen(),
@@ -74,7 +75,9 @@ class BottomTabState extends State<BottomTabScreen>
               ? AppbarWidget(
                   context: context,
                   clickListener: this,
-                  counter: UserModel.accessToken=='notLogin'?'0':UserModel.cartCount,
+                  counter: UserModel.accessToken == 'notLogin'
+                      ? '0'
+                      : UserModel.cartCount,
                   isBack: false,
                   type: "more",
                   title: "More on App",
@@ -82,8 +85,10 @@ class BottomTabState extends State<BottomTabScreen>
               : AppbarWidget(
                   context: context,
                   clickListener: this,
-        counter: UserModel.accessToken=='notLogin'?'0':UserModel.cartCount,
-        isBack: false,
+                  counter: UserModel.accessToken == 'notLogin'
+                      ? '0'
+                      : UserModel.cartCount,
+                  isBack: false,
                   type: "home",
                   onTap: () {
                     _key.currentState.openDrawer();
@@ -135,13 +140,6 @@ class BottomTabState extends State<BottomTabScreen>
                                                   fit: BoxFit.fill,
                                                   image: AssetImage(
                                                       'images/logo.png'))),
-                                          /*CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.blueGrey.withOpacity(0.7),
-              child: Image.asset(
-                'images/app_logo.png',
-              ),
-            ),*/
                                         )),
                                     Padding(
                                       padding:
@@ -197,8 +195,11 @@ class BottomTabState extends State<BottomTabScreen>
               ),
               ListTile(
                 title: Text(
-                  selectedLang=='English'?
-                  'Change Language':selectedLang=='Hindi'?'भाषा बदलें':'ଭାଷା ପରିବର୍ତ୍ତନ କରନ୍ତୁ |',
+                  selectedLang == 'English'
+                      ? 'Change Language'
+                      : selectedLang == 'Hindi'
+                          ? 'भाषा बदलें'
+                          : 'ଭାଷା ପରିବର୍ତ୍ତନ କରନ୍ତୁ |',
                   style: TextStyle(
                       fontSize: 16,
                       color: MyColor.textBlueColor,
@@ -206,18 +207,12 @@ class BottomTabState extends State<BottomTabScreen>
                       fontFamily: 'GilroySemibold'),
                 ),
                 onTap: () {
-
-                  if(selectedLang=='English')
-                    {
-                      selectLANG=0;
-                    }
-                  else if(selectedLang=='Hindi')
-                    {
-                      selectLANG=1;
-                    }
-                  else
-                    selectLANG=2;
-
+                  if (selectedLang == 'English') {
+                    selectLANG = 0;
+                  } else if (selectedLang == 'Hindi') {
+                    selectLANG = 1;
+                  } else
+                    selectLANG = 2;
 
 /*
                   Navigator.push(context, CupertinoPageRoute(builder: (context)=>AccountScreen()));*/
@@ -235,43 +230,31 @@ class BottomTabState extends State<BottomTabScreen>
                                 children: List<Widget>.generate(3, (int index) {
                                   return Row(
                                     children: <Widget>[
-
-
-
                                       Radio<int>(
                                         value: index,
                                         activeColor: MyColor.themeColor,
                                         groupValue: selectedRadio,
                                         onChanged: (int value) {
-
                                           setState(() {
                                             selectedRadio = value;
-                                            if(index==0)
-                                              {
-                                                _updateViews('English');
-
-                                              }
-                                            else if(index==1){
-
-
+                                            if (index == 0) {
+                                              _updateViews('English');
+                                            } else if (index == 1) {
                                               _updateViews('Hindi');
-
+                                            } else {
+                                              _updateViews('Oriya');
                                             }
-                                            else
-                                              {
-                                                _updateViews('Oriya');
-                                              }
-
-
                                           });
-
                                         },
                                       ),
-
-                                      Text(index==0?'English':index==1?'हिन्दी':'Oriya',style: TextStyle(fontFamily: 'GilroySemiBold',color: Colors.black87),),
-
-
-
+                                      Text(
+                                        index == 0
+                                            ? 'English'
+                                            : index == 1 ? 'हिन्दी' : 'Oriya',
+                                        style: TextStyle(
+                                            fontFamily: 'GilroySemiBold',
+                                            color: Colors.black87),
+                                      ),
                                     ],
                                   );
                                 }),
@@ -284,8 +267,9 @@ class BottomTabState extends State<BottomTabScreen>
               ),
               ListTile(
                 title: Text(
-                  selectedLang=='English'?
-                  'Account':selectedLang=='Hindi'?'खाता':'ଖାତା',
+                  selectedLang == 'English'
+                      ? 'Account'
+                      : selectedLang == 'Hindi' ? 'खाता' : 'ଖାତା',
                   style: TextStyle(
                       fontSize: 16,
                       color: MyColor.textBlueColor,
@@ -306,8 +290,9 @@ class BottomTabState extends State<BottomTabScreen>
               ),
               ListTile(
                 title: Text(
-                  selectedLang=='English'?
-                  'My Profile':selectedLang=='Hindi'?'प्रोफाइल':'ମୋର ପ୍ରୋଫାଇଲ୍',
+                  selectedLang == 'English'
+                      ? 'My Profile'
+                      : selectedLang == 'Hindi' ? 'प्रोफाइल' : 'ମୋର ପ୍ରୋଫାଇଲ୍',
                   style: TextStyle(
                       fontSize: 16,
                       color: MyColor.textBlueColor,
@@ -326,10 +311,13 @@ class BottomTabState extends State<BottomTabScreen>
                   }
                 },
               ),
+
+
               ListTile(
                 title: Text(
-                  selectedLang=='English'?
-                  'Orders':selectedLang=='Hindi'?'मेरे चीज़े':'ମୋର ଆଦେଶ',
+                  selectedLang == 'English'
+                      ? 'Orders'
+                      : selectedLang == 'Hindi' ? 'मेरे चीज़े' : 'ମୋର ଆଦେଶ',
                   style: TextStyle(
                       fontSize: 16,
                       color: MyColor.textBlueColor,
@@ -348,12 +336,13 @@ class BottomTabState extends State<BottomTabScreen>
                   }
                 },
               ),
-
-
               ListTile(
                 title: Text(
-                  selectedLang=='English'?
-                  'Favourite Products':selectedLang=='Hindi'?'पसंदीदा उत्पाद':'ପ୍ରିୟ ଉତ୍ପାଦଗୁଡିକ |',
+                  selectedLang == 'English'
+                      ? 'Favourite Products'
+                      : selectedLang == 'Hindi'
+                          ? 'पसंदीदा उत्पाद'
+                          : 'ପ୍ରିୟ ଉତ୍ପାଦଗୁଡିକ |',
                   style: TextStyle(
                       fontSize: 16,
                       color: MyColor.textBlueColor,
@@ -365,20 +354,18 @@ class BottomTabState extends State<BottomTabScreen>
                     LoginDialog.showLogInDialog(
                         context, 'Please Login to view Favourite Items !!');
                   } else {
-                    Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                            builder: (context) => FavScreen()));
+                    Navigator.push(context,
+                        CupertinoPageRoute(builder: (context) => FavScreen()));
                   }
                 },
               ),
-
-
-
               ListTile(
                 title: Text(
-                  selectedLang=='English'?
-                  'Shop by Category':selectedLang=='Hindi'?'वर्गों के अनुसार':'ଦୋକାନ ବର୍ଗ |',
+                  selectedLang == 'English'
+                      ? 'Shop by Category'
+                      : selectedLang == 'Hindi'
+                          ? 'वर्गों के अनुसार'
+                          : 'ଦୋକାନ ବର୍ଗ |',
                   style: TextStyle(
                       fontSize: 16,
                       color: MyColor.textBlueColor,
@@ -394,8 +381,11 @@ class BottomTabState extends State<BottomTabScreen>
               ),
               ListTile(
                 title: Text(
-                  selectedLang=='English'?
-                  'Buy Again':selectedLang=='Hindi'?'फिर से खरीदें':'ପୁନର୍ବାର କିଣନ୍ତୁ |',
+                  selectedLang == 'English'
+                      ? 'Buy Again'
+                      : selectedLang == 'Hindi'
+                          ? 'फिर से खरीदें'
+                          : 'ପୁନର୍ବାର କିଣନ୍ତୁ |',
                   style: TextStyle(
                       fontSize: 16,
                       color: MyColor.textBlueColor,
@@ -409,8 +399,11 @@ class BottomTabState extends State<BottomTabScreen>
               UserModel.accessToken == 'notLogin'
                   ? ListTile(
                       title: Text(
-                        selectedLang=='English'?
-                        'Log In':selectedLang=='Hindi'?'लॉग इन करें':'ଭିତରକୁ ଯାଉ',
+                        selectedLang == 'English'
+                            ? 'Log In'
+                            : selectedLang == 'Hindi'
+                                ? 'लॉग इन करें'
+                                : 'ଭିତରକୁ ଯାଉ',
                         style: TextStyle(
                             fontSize: 16,
                             color: MyColor.textBlueColor,
@@ -426,8 +419,11 @@ class BottomTabState extends State<BottomTabScreen>
                     )
                   : ListTile(
                       title: Text(
-                        selectedLang=='English'?
-                        'Log Out':selectedLang=='Hindi'?'लॉग आउट':'ପ୍ରସ୍ଥାନ କର',
+                        selectedLang == 'English'
+                            ? 'Log Out'
+                            : selectedLang == 'Hindi'
+                                ? 'लॉग आउट'
+                                : 'ପ୍ରସ୍ଥାନ କର',
                         style: TextStyle(
                             fontSize: 16,
                             color: MyColor.textBlueColor,
@@ -438,14 +434,17 @@ class BottomTabState extends State<BottomTabScreen>
                         showLogOutDialog(context);
                       },
                     ),
-
-              SizedBox(height: 45,),
-
+              SizedBox(
+                height: 45,
+              ),
               ListTile(
-               // leading: Icon(Icons.access_alarm),
+                // leading: Icon(Icons.access_alarm),
                 title: Text(
-                  selectedLang=='English'?
-                  'Rate Us':selectedLang=='Hindi'?'हमें रेटिंग दें':'ପଆମକୁ ମୂଲ୍ୟାଙ୍କନ କର |',
+                  selectedLang == 'English'
+                      ? 'Rate Us'
+                      : selectedLang == 'Hindi'
+                          ? 'हमें रेटिंग दें'
+                          : 'ପଆମକୁ ମୂଲ୍ୟାଙ୍କନ କର |',
                   style: TextStyle(
                       fontSize: 18,
                       color: Colors.blue,
@@ -453,15 +452,16 @@ class BottomTabState extends State<BottomTabScreen>
                       fontFamily: 'GilroySemibold'),
                 ),
                 onTap: () {
-                 _launchURL();
+                  _launchURL();
                 },
               ),
-
-
               ListTile(
                 title: Text(
-                  selectedLang=='English'?
-                  'Share':selectedLang=='Hindi'?'साझा करें':'ଅଂଶୀଦାର କରନ୍ତୁ |',
+                  selectedLang == 'English'
+                      ? 'Share'
+                      : selectedLang == 'Hindi'
+                          ? 'साझा करें'
+                          : 'ଅଂଶୀଦାର କରନ୍ତୁ |',
                   style: TextStyle(
                       fontSize: 18,
                       color: Colors.blue,
@@ -469,14 +469,10 @@ class BottomTabState extends State<BottomTabScreen>
                       fontFamily: 'GilroySemibold'),
                 ),
                 onTap: () {
-                  Share.share('Please download Pallimart India from https://play.google.com/store/apps/details?id=com.pallimart');
-
+                  Share.share(
+                      'Please download Pallimart India from https://play.google.com/store/apps/details?id=com.pallimart');
                 },
               ),
-
-
-
-
             ],
           ),
         ),
@@ -630,11 +626,9 @@ class BottomTabState extends State<BottomTabScreen>
     );
   }
 
-  _updateViews(String language)
-  {
-
+  _updateViews(String language) {
     setState(() {
-      selectedLang=language;
+      selectedLang = language;
     });
   }
 
@@ -646,5 +640,4 @@ class BottomTabState extends State<BottomTabScreen>
       throw 'Could not launch $url';
     }
   }
-
 }

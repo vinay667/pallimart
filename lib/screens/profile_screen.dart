@@ -9,6 +9,7 @@ import 'package:pallimart/colors/colors.dart';
 import 'package:pallimart/network/api_helper.dart';
 import 'package:pallimart/utils/api_dialog.dart';
 import 'package:pallimart/utils/constants2.dart';
+import 'package:pallimart/utils/no_internet_check.dart';
 import 'package:pallimart/widgets/appbar_title.dart';
 import 'package:pallimart/widgets/button_widget.dart';
 import 'package:pallimart/widgets/text_input_widget.dart';
@@ -30,6 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   var textControllerName = new TextEditingController();
   var textControllerEmail = new TextEditingController();
   var textControllerLastName = new TextEditingController();
+  var textControllerPhone = new TextEditingController();
   final FocusNode userNameFocus = FocusNode();
   final FocusNode phoneNumberFocus = FocusNode();
   final FocusNode passwordFocus = FocusNode();
@@ -84,51 +86,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                             Expanded(
                               child: Container(),
                             ),
-                            Stack(
-                              alignment: Alignment.bottomRight,
-                              children: <Widget>[
-                                CircleAvatar(
-                                  radius: 40,
-                                  backgroundColor: MyColor.whiteColor,
-                                  child: CircleAvatar(
-                                    radius: 38,
-                                    backgroundColor: MyColor.whiteColor,
-                                    backgroundImage:
-                                        AssetImage('images/grocery.png'),
-                                  ),
-                                ),
-                                Container(
-                                  height: 28,
-                                  width: 28,
-                                  decoration: BoxDecoration(
-                                    color: MyColor.blackColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Image.asset(
-                                    'images/icon_edit.png',
-                                  ),
-                                )
-                              ],
-                            ),
+
                           ],
                         ))
                   ]),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        _userName,
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: MyColor.homeTitleColor,
-                            fontFamily: 'Gilroy',
-                            fontWeight: FontWeight.w700),
-                      )),
-                  SizedBox(
-                    height: 8,
-                  ),
+
+
                   Column(
                     children: <Widget>[
                       MyTextInputField(this, 'First Name:','first name',
@@ -138,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       MyTextInputField(this, 'Email Id:', 'email', emailFocus,
                           passwordFocus,textControllerEmail),
                       MyTextInputField(
-                          this, 'Password', 'password', passwordFocus, null,null),
+                          this, 'Phone', 'phone', passwordFocus, null,textControllerPhone),
                     ],
                   ),
                 ],
@@ -177,7 +140,8 @@ class _ProfileScreenState extends State<ProfileScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-    setUserData();
+   // setUserData();
+    checkInternetAPIcall();
   }
   @override
   void onButtonClickListener(int id) {
@@ -188,18 +152,37 @@ class _ProfileScreenState extends State<ProfileScreen>
       }*/
     }
   }
-  Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
-    setState(() {
-      _image = File(pickedFile.path);
-    });
+
+
+  void checkInternetAPIcall() async {
+    if (await InternetCheck.check() == true) {
+      getMyProfile();
+    }
   }
+
+
+
+  getMyProfile() async {
+    ApiBaseHelper helper=new ApiBaseHelper();
+    APIDialog.showAlertDialog(context, 'Please wait...');
+    var response=await helper.getWithToken('product/api/customer/profile', context);
+    Navigator.pop(context);
+    setState(() {
+      textControllerPhone.text=response['data']['phoneNumber'].toString();
+      textControllerName.text=response['data']['firstName'];
+      textControllerLastName.text=response['data']['lastName'];
+      textControllerEmail.text=response['data']['emailAddress'];
+    });
+    print(response);
+  }
+
   updateUserProfile() async {
     var _fromData = {
       'firstName': textControllerName.text,
       'lastName':textControllerLastName.text,
-      'emailAddress':textControllerEmail.text
+      'emailAddress':textControllerEmail.text,
+      'phoneNumber':textControllerPhone.text
     };
     ApiBaseHelper helper=new ApiBaseHelper();
     APIDialog.showAlertDialog(context, 'Updating profile...');

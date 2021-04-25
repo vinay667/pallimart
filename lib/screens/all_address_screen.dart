@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pallimart/colors/colors.dart';
+import 'package:pallimart/models/dfr.dart';
 import 'package:pallimart/network/api_helper.dart';
 import 'package:pallimart/screens/add_address_screen.dart';
 import 'package:pallimart/utils/api_dialog.dart';
@@ -78,8 +79,21 @@ class AllAddressState extends State<AllAddressScreen> {
 
                       removeAddress(addressList[position]['id']);
 
-                    },(){
-                      Navigator.push(context, CupertinoPageRoute(builder: (context)=>AddAddressScreen()));
+                    },() async {
+                      // Edit Address logic
+
+                      AddressModel.setAddressID(addressList[position]['id'].toString());
+                      print(addressList[position]['id'].toString());
+
+                      var result=await Navigator.push(context, CupertinoPageRoute(builder: (context)=>AddAddressScreen('update')));
+
+                      if(result!=null)
+                      {
+                        checkInternetAPIcall();
+                      }
+
+
+
                     }),
                   );
                 }),
@@ -88,7 +102,7 @@ class AllAddressState extends State<AllAddressScreen> {
            onTap: ()async{
 
      // Navigator.push(context, CupertinoPageRoute(builder: (context)=>PaymentScreen()));
-        var result=await Navigator.push(context, CupertinoPageRoute(builder: (context)=>AddAddressScreen()));
+        var result=await Navigator.push(context, CupertinoPageRoute(builder: (context)=>AddAddressScreen('edit')));
 
         if(result!=null)
           {

@@ -64,7 +64,7 @@ class _AccountScreenState extends State<AccountScreen>
                     Expanded(
                       child: Container(),
                     ),
-                    CircleAvatar(
+                   /* CircleAvatar(
                       radius: 40,
                       backgroundColor: MyColor.whiteColor,
                       child: CircleAvatar(
@@ -72,26 +72,12 @@ class _AccountScreenState extends State<AccountScreen>
                         backgroundColor: MyColor.whiteColor,
                         backgroundImage: AssetImage('images/grocery.png'),
                       ),
-                    ),
+                    ),*/
                   ],
                 ))
           ]),
-          SizedBox(
-            height: 8,
-          ),
-          Container(
-              alignment: Alignment.center,
-              child: Text(
-                username,
-                style: TextStyle(
-                    fontSize: 18,
-                    color: MyColor.homeTitleColor,
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w700),
-              )),
-          SizedBox(
-            height: 8,
-          ),
+
+
           Column(
             children: <Widget>[
               Card(

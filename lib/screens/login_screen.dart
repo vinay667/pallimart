@@ -322,7 +322,8 @@ loginUser() async {
           }
         else if(fetchResponse['success'].toString()=='false')
           {
-            Toast.show(fetchResponse['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM,backgroundColor: Colors.black,);
+            showAlertDialog(context);
+            //Toast.show(fetchResponse['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM,backgroundColor: Colors.black,);
             //MySnackbar.displaySnackbar(key,MyColor.noInternetColor,fetchResponse['message']);
           }
 
@@ -369,5 +370,35 @@ loginUser() async {
   async {
     SharedPreferences prefs=await SharedPreferences.getInstance();
     prefs.setString('page_value', 'login');
+  }
+
+  showAlertDialog(BuildContext context) {
+
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+
+        Navigator.pop(context);
+
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Invalid credentials"),
+      content: Text("Please enter valid email/password !"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

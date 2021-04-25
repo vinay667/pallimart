@@ -283,9 +283,7 @@ class SignUpScreenState extends State<SignUpScreen> {
 
                                 child: Image.asset('images/google_ic.png',width: 60,height: 60,),
                               ),
-                              SizedBox(width: 15,),
-
-
+                              SizedBox(width: 15),
                               InkWell(
                                 onTap: (){
                                   _logOut();
@@ -349,9 +347,6 @@ class SignUpScreenState extends State<SignUpScreen> {
           print(fetchResponse['message']);
           MySnackbar.displaySnackbar(key, MyColor.noInternetColor, fetchResponse['message']);
         }
-
-
-
 
     } catch (errorMessage) {
       message = errorMessage.toString();
